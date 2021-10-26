@@ -6,10 +6,23 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer  {
+    
     private String printerName = "";
     private String fileName = "";
-    private ArrayList printerList;
+    private ArrayList<String> printerList = new ArrayList<String>();
     private String status = "";
+
+    public static void main(String[] args) {
+        try {
+            Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+            PrinterServer server = new PrinterServerImpl("");
+            server.registerNewPrinter("Printer1");
+            server.registerNewPrinter("Printer2");
+            reg.rebind("PrinterServer", server); 
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public PrinterServerImpl(String aName) throws RemoteException {
         printerName = aName;
@@ -33,9 +46,10 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     }
 
     @Override
-    public void start() throws RemoteException {
+    public String start() throws RemoteException {
         // TODO Auto-generated method stub
         status = "printing";
+        return status;
     }
 
     @Override
@@ -69,15 +83,9 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
         
     }
 
-    public static void main(String[] args) {
-        try {
-            Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-            PrinterServer server = new PrinterServerImpl("");
-            UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
-            reg.rebind("PrinterServer", server); 
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void registerNewPrinter(String printerName){
+        printerList.add(printerName);
     }
     
 }
