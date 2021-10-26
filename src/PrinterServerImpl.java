@@ -7,6 +7,7 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     private String printerName = "";
     private String fileName = "";
     private ArrayList printerList;
+    private String status = "";
 
     public PrinterServerImpl(String aName) throws RemoteException {
         printerName = aName;
@@ -14,7 +15,7 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
 
     @Override
     public void print(String filename, String printer) throws RemoteException {
-        // TODO Auto-generated method stub
+        printerList.
         System.out.println(filename + " " + printer); 
     }
 
@@ -33,24 +34,25 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     @Override
     public void start() throws RemoteException {
         // TODO Auto-generated method stub
-        
+        status = "printing";
     }
 
     @Override
     public void stop() throws RemoteException {
         // TODO Auto-generated method stub
-        
+        status = "idle";
     }
 
     @Override
     public void restart() throws RemoteException {
         // TODO Auto-generated method stub
+        status = "printing";
         
     }
 
     @Override
     public void status(String printer) throws RemoteException {
-        // TODO Auto-generated method stub
+        System.out.println("The printer:" + printer + "is " + status);
         
     }
 
