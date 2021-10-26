@@ -1,6 +1,10 @@
 package datasecurity_rmi.src;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 
 public class MyClient {
@@ -9,19 +13,29 @@ public class MyClient {
          // classes
          System.setSecurityManager(new RMISecurityManager());
 
-         String url = "rmi://osprey.unf.edu/";   // server
          try {
          // Lookup account object
-         PrinterServer printer1 = (PrinterServer)Naming.lookup(url + "Printer1");        
+         Registry reg = LocateRegistry.getRegistry();
+         PrinterServer printerServer = (PrinterServer) reg.lookup("PrinterServer");        
          //Make a deposit
-         printer1.print("NewDocument", "Printer1");
+         printerServer.print("NewDocument", "Printer1");
 
    }
-     catch (Exception e) {               
+     catch (RemoteException | NotBoundException e) {               
      System.out.println("Error looking up printer");
         e.printStackTrace();
      }
      System.exit(0);
    }
 
+   public void callServer(){
+      try {
+         
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
 }
+
+

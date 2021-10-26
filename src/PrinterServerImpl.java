@@ -2,6 +2,8 @@ package datasecurity_rmi.src;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer  {
     private String printerName = "";
@@ -15,7 +17,6 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
 
     @Override
     public void print(String filename, String printer) throws RemoteException {
-        printerList.
         System.out.println(filename + " " + printer); 
     }
 
@@ -66,6 +67,17 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     public void setConfig(String parameter, String value) throws RemoteException {
         // TODO Auto-generated method stub
         
+    }
+
+    public static void main(String[] args) {
+        try {
+            Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+            PrinterServer server = new PrinterServerImpl("");
+            UnicastRemoteObject.exportObject(server, Registry.REGISTRY_PORT);
+            reg.rebind("PrinterServer", server); 
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
     
 }
