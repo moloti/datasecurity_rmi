@@ -12,17 +12,22 @@ import java.util.List;
 import java.util.Map;
 
 public class UserService {
-    private static final String outputFilePath = System.getProperty("user.dir") + "/pass.txt";
+    private static final String outputFilePath = System.getProperty("user.dir") + "/datasecurity_rmi/src/resources/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
     private File file = null;
 
     public UserService() {
+
         if(file != null){
         if (file.exists() && !file.isDirectory()) {
             readUserMap();
         } else {
             createUser("Thomas", "1234");
         }
+    }else{
+        System.out.println(outputFilePath);
+        createUser("Thomas", "1234");
+        System.out.println("User Creation Finished");
     }
     }
 
@@ -39,7 +44,7 @@ public class UserService {
     public void createUser(String username, String password) {
 
         userMap.put(username, hash(password));
-
+        System.out.println("Create User");
         if (file == null) {
             file = new File(outputFilePath);
         }
@@ -55,6 +60,7 @@ public class UserService {
     }
 
     private void writeFile(File file) {
+        System.out.println("Inside Write File");
         BufferedWriter bf = null;
 
         try {
@@ -68,14 +74,13 @@ public class UserService {
                 // new line
                 bf.newLine();
             }
-
+            System.out.println("Done Writing Before Flush");
             bf.flush();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
 
             try {
-
                 // always close the writer
                 bf.close();
             } catch (Exception e) {

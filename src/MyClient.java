@@ -25,6 +25,7 @@ public class MyClient {
             authenticated = false;
             while (!authenticated)
                authenticated = showLoginInfo();
+               cancle = 
          }
 
       } catch (RemoteException | NotBoundException e) {
@@ -40,6 +41,11 @@ public class MyClient {
       } catch (Exception e) {
          e.printStackTrace();
       }
+   }
+
+   private static boolean chooseAction(){
+      System.out.println("Please choose an action:");
+      return false;
    }
 
    private static boolean showLoginInfo() {
