@@ -11,7 +11,7 @@ public class MyClient {
    private static PrinterServer server;
 
    public static void main(String[] args) throws Exception {
-      boolean cancle = false;
+      boolean cancel = false;
       boolean authenticated = false;
 
       try {
@@ -21,11 +21,11 @@ public class MyClient {
          server = (PrinterServer) reg.lookup("PrinterServer");
          System.out.println("Client Connected to Server");
 
-         while (!cancle) {
+         while (!cancel) {
             authenticated = false;
             while (!authenticated)
                authenticated = showLoginInfo();
-               cancle = chooseAction();
+            cancel = chooseAction();
          }
 
       } catch (RemoteException | NotBoundException e) {
@@ -51,11 +51,46 @@ public class MyClient {
       System.out.println("-------------------------\n");
       System.out.println("1 - Print something");
       System.out.println("2 - Show the printing queue for a certain printer");
-      System.out.println("3 - Show the ");
-      System.out.println("4 - Quit");
+      System.out.println("3 - Move Job to the top of the Queue");
+      System.out.println("4 - Restart print server");
+      System.out.println("5 - Get Printer Configuration");
+      System.out.println("6 - Set Printer Configuration");
+      System.out.println("7 - Quit");
 
       selection = input.nextInt();
 
+      switch (selection) {
+      case 1:
+      System.out.println("What do you want to print?");
+      try {
+         server.print("filename", "printer");
+      } catch (Exception e) {
+         //TODO: handle exception
+      }
+      
+         break;
+      case 2:
+
+         break;
+      case 3:
+
+         break;
+      case 4:
+
+         break;
+      case 5:
+
+         break;
+      case 6:
+
+         break;
+      case 7:
+
+         break;
+
+      default:
+         break;
+      }
 
       return false;
    }
