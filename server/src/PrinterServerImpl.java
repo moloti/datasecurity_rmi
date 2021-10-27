@@ -18,7 +18,7 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
 
     @Override
     public boolean authenticate(String username, String password) throws RemoteException {
-        // TODO Auto-generated method stub
+        
         return false;
     }
 
