@@ -11,7 +11,7 @@ public class MyClient {
    private static PrinterServer server;
 
    public static void main(String[] args) throws Exception {
-      boolean cancle = false;
+      boolean cancel = false;
       boolean authenticated = false;
 
       try {
@@ -21,11 +21,11 @@ public class MyClient {
          server = (PrinterServer) reg.lookup("PrinterServer");
          System.out.println("Client Connected to Server");
 
-         while (!cancle) {
+         while (!cancel) {
             authenticated = false;
             while (!authenticated)
                authenticated = showLoginInfo();
-               cancle = chooseAction();
+               cancel = chooseAction();
          }
 
       } catch (RemoteException | NotBoundException e) {
