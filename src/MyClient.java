@@ -25,7 +25,7 @@ public class MyClient {
             authenticated = false;
             while (!authenticated)
                authenticated = showLoginInfo();
-               cancle = 
+               cancle = chooseAction();
          }
 
       } catch (RemoteException | NotBoundException e) {
