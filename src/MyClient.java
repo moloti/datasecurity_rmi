@@ -1,6 +1,7 @@
 package datasecurity_rmi.src;
 
 import java.rmi.Naming;
+import java.net.InetAddress;
 import java.util.Scanner;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,8 +16,9 @@ public class MyClient {
       boolean authenticated = false;
 
       try {
-         // Start Registry
-         Registry reg = LocateRegistry.getRegistry();
+         // Make reference to SSL-based registry
+         Registry reg = LocateRegistry.getRegistry(InetAddress.getLocalHost().getHostName(), Registry.REGISTRY_PORT,
+               new RMISSLClientSocketFactory());
          // Get Printer server
          server = (PrinterServer) reg.lookup("PrinterServer");
          System.out.println("Client Connected to Server");
@@ -25,7 +27,7 @@ public class MyClient {
             authenticated = false;
             while (!authenticated)
                authenticated = showLoginInfo();
-               cancel = chooseAction();
+            cancel = chooseAction();
          }
 
       } catch (RemoteException | NotBoundException e) {
@@ -55,7 +57,6 @@ public class MyClient {
       System.out.println("4 - Quit");
 
       selection = input.nextInt();
-
 
       return false;
    }
