@@ -17,14 +17,14 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     private static PrinterServerImpl server;
 
     public PrinterServerImpl(String aName) throws RemoteException {
-              printerName = aName;
-              userService = new UserService();
-              userMap = userService.getUserMap();
+        printerName = aName;
+        userService = new UserService();
+        userMap = userService.getUserMap();
     }
 
     @Override
     public boolean authenticate(String username, String password) throws RemoteException {
-        
+
         return false;
     }
 
@@ -46,12 +46,12 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     }
 
     @Override
-    public String start() throws RemoteException {
+    public void start() throws RemoteException {
         // TODO Auto-generated method stub
         status = "started";
         registerNewPrinter("Printer1");
         registerNewPrinter("Printer2");
-        return "Server Started";
+        System.out.println("Server Started");
     }
 
     @Override

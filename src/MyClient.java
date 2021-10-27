@@ -30,8 +30,7 @@ public class MyClient {
 
    private static void callServer(String command) {
       try {
-         String str = server.start();
-         System.out.println(str);
+         server.start();
       } catch (Exception e) {
          e.printStackTrace();
       }
