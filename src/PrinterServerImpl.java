@@ -24,8 +24,12 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
 
     @Override
     public boolean authenticate(String username, String password) throws RemoteException {
+        if((!userMap.isEmpty()) || userMap.containsKey(username)){
+           return userService.verifyHash(password, userMap.get(username));
+        }else {
+           return false;
+        }
         
-        return false;
     }
 
     @Override

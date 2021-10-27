@@ -10,6 +10,7 @@ public class ApplicationServer {
             PrinterServer server = new PrinterServerImpl("");
             Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             reg.rebind("PrinterServer", server);
+            System.out.println("Server Started");
         } catch (RemoteException e) {
             e.printStackTrace();
         }

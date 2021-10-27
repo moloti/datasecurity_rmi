@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class UserService {
-    private static final String outputFilePath = System.getProperty("user.dir") + "/resources/pass.txt";
+    private static final String outputFilePath = System.getProperty("user.dir") + "/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
     private File file = null;
 
@@ -50,7 +50,7 @@ public class UserService {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    private boolean verifyHash(String password, String hash) {
+    public boolean verifyHash(String password, String hash) {
         return BCrypt.checkpw(password, hash);
     }
 
