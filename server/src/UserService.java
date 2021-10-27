@@ -14,23 +14,44 @@ import java.util.Map;
 import datasecurity_rmi.server.src.resources.BCrypt;
 
 public class UserService {
-    private final static String outputFilePath = "/resources/pass.txt";
-    private HashMap<String, String> userMap = new HashMap<String, String>();
+    private static final String outputFilePath = System.getProperty("user.dir") + "/resources/pass.txt";
+    private HashMap<String, String> userMap = new HashMap<>();
     private File file = null;
 
     public UserService() {
         if (file.exists() && !file.isDirectory()) {
-            readUser();
+            readUserMap();
         } else {
             createUser("Thomas", "1234");
         }
     }
 
-    private void readUser() {
+    public HashMap<String, String> getUserMap() {
+        return userMap;
+    }
+
+    private void readUserMap() {
         if (file == null) {
             readFile(file);
         }
-        
+    }
+
+    public void createUser(String username, String password) {
+
+        userMap.put(username, hash(password));
+
+        if (file == null) {
+            file = new File(outputFilePath);
+        }
+        writeFile(file);
+    }
+
+    private String hash(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private boolean verifyHash(String password, String hash) {
+        return BCrypt.checkpw(password, hash);
     }
 
     private void writeFile(File file) {
@@ -39,7 +60,7 @@ public class UserService {
         try {
             bf = new BufferedWriter(new FileWriter(file, true));
             // iterate map entries
-            for (Map.Entry<String, String> entry : userMap.entrySet()) {
+            for (HashMap.Entry<String, String> entry : userMap.entrySet()) {
 
                 // put key and value separated by a colon
                 bf.write(entry.getKey() + ":" + entry.getValue());
@@ -100,24 +121,6 @@ public class UserService {
                 ;
             }
         }
-    }
-
-    private void createUser(String username, String password) {
-
-        userMap.put(username, hash(password));
-
-        if (file == null) {
-            file = new File(outputFilePath);
-        }
-        writeFile(file);
-    }
-
-    private String hash(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
-    }
-
-    private boolean verifyHash(String password, String hash) {
-        return BCrypt.checkpw(password, hash);
     }
 
 }

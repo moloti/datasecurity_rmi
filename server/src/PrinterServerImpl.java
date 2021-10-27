@@ -2,19 +2,24 @@ package datasecurity_rmi.server.src;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.rmi.RemoteException;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
 
     private String printerName = "";
     private String fileName = "";
-    private ArrayList<String> printerList = new ArrayList<String>();
+    private ArrayList<String> printerList = new ArrayList<>();
+    private HashMap<String, String> userMap = new HashMap<>();
+    private UserService userService;
     private String status = "";
     private static PrinterServerImpl server;
 
     public PrinterServerImpl(String aName) throws RemoteException {
               printerName = aName;
-              UserService userService = new UserService();
+              userService = new UserService();
+              userMap = userService.getUserMap();
     }
 
     @Override
