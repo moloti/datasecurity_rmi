@@ -21,7 +21,7 @@ public class MyClient {
          printerServer = (PrinterServer) reg.lookup("PrinterServer");
          MyClient client = new MyClient();
 
-         client.callServer(printerServer);
+         client.callServer(printerServer, "");
       } catch (RemoteException | NotBoundException e) {
          System.out.println("Error looking up printer");
          e.printStackTrace();
@@ -33,6 +33,8 @@ public class MyClient {
       try {
          String str = server.start();
          System.out.println(str);
+      } catch (Exception e) {
+         e.printStackTrace();
       }
    }
 
@@ -51,12 +53,11 @@ public class MyClient {
          if(printerServer.authenticate(username, password)){
             System.out.print("Login successfull!");
             return true;
-         } else{
-            return false;
          }
       } catch (Exception e) {
          e.printStackTrace();
       }
+      return false;
    } 
 
    
