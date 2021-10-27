@@ -14,6 +14,7 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
 
     public PrinterServerImpl(String aName) throws RemoteException {
               printerName = aName;
+              UserService userService = new UserService();
     }
 
     @Override
