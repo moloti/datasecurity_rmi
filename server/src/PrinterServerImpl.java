@@ -3,8 +3,6 @@ package datasecurity_rmi.server.src;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
 
@@ -12,24 +10,10 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     private String fileName = "";
     private ArrayList<String> printerList = new ArrayList<String>();
     private String status = "";
-
-    public static void main(String[] args) {
-        if (System.getSecurityManager() == null) {
-            System.setSecurityManager(new SecurityManager());
-        }
-        try {
-            Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-            PrinterServer server = new PrinterServerImpl("");
-            server.registerNewPrinter("Printer1");
-            server.registerNewPrinter("Printer2");
-            reg.rebind("PrinterServer", server);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
+    private static PrinterServerImpl server;
 
     public PrinterServerImpl(String aName) throws RemoteException {
-        printerName = aName;
+              printerName = aName;
     }
 
     @Override
@@ -52,8 +36,10 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     @Override
     public String start() throws RemoteException {
         // TODO Auto-generated method stub
-        status = "printing";
-        return status;
+        status = "started";
+        registerNewPrinter("Printer1");
+        registerNewPrinter("Printer2");
+        return "Server Started";
     }
 
     @Override

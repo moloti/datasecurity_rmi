@@ -10,18 +10,13 @@ import java.rmi.registry.Registry;
 import datasecurity_rmi.server.src.PrinterServer;
 
 public class MyClient {
-
+   private static PrinterServer printerServer;
    public static void main(String argv[]) {
-      // set the RMI Security Manager, in case we need to load remote
-      // classes
-      if (System.getSecurityManager() == null) {
-         System.setSecurityManager(new SecurityManager());
-      }
 
       try {
          // Lookup account object
          Registry reg = LocateRegistry.getRegistry();
-         PrinterServer printerServer = (PrinterServer) reg.lookup("PrinterServer");
+         printerServer = (PrinterServer) reg.lookup("PrinterServer");
          // Make a deposit
          MyClient client = new MyClient();
          client.callServer(printerServer);
