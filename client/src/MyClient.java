@@ -14,11 +14,12 @@ public class MyClient {
    public static void main(String argv[]) {
 
       try {
-         // Lookup account object
+         // Start Registry
          Registry reg = LocateRegistry.getRegistry();
+         // Get Printer server
          printerServer = (PrinterServer) reg.lookup("PrinterServer");
-         // Make a deposit
          MyClient client = new MyClient();
+
          client.callServer(printerServer);
       } catch (RemoteException | NotBoundException e) {
          System.out.println("Error looking up printer");
@@ -27,7 +28,8 @@ public class MyClient {
       System.exit(0);
    }
 
-   public void callServer(PrinterServer server) {
+   
+   private static void callServer(PrinterServer server) {
       try {
          String str = server.start();
          System.out.println(str);
@@ -35,5 +37,6 @@ public class MyClient {
          e.printStackTrace();
       }
    }
+
 
 }
