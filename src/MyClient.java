@@ -43,8 +43,20 @@ public class MyClient {
       }
    }
 
-   private static boolean chooseAction(){
+   private static boolean chooseAction() {
+      int selection;
+      Scanner input = new Scanner(System.in);
+
       System.out.println("Please choose an action:");
+      System.out.println("-------------------------\n");
+      System.out.println("1 - Print something");
+      System.out.println("2 - Show the printing queue for a certain printer");
+      System.out.println("3 - Show the ");
+      System.out.println("4 - Quit");
+
+      selection = input.nextInt();
+
+
       return false;
    }
 
@@ -63,7 +75,7 @@ public class MyClient {
          if (server.authenticate(username, password)) {
             System.out.println("Login successfull!");
             return true;
-         }else{
+         } else {
             System.out.println("Access Denied");
             return false;
          }
