@@ -10,6 +10,7 @@ import java.rmi.registry.Registry;
 
 public class MyClient {
    private static PrinterServer server;
+   private static String session;
 
    public static void main(String[] args) throws Exception {
       boolean cancel = false;
@@ -186,6 +187,18 @@ public class MyClient {
 
    private static boolean showLoginInfo() {
       Scanner input = new Scanner(System.in);
+      try {
+         if (session != null){
+            System.out.println("Checking session...");
+        if (session != null && server.checkSession(session)) {
+            System.out.println("Session valid!");
+            return true;
+        }
+      }
+      } catch (Exception e) {
+         //TODO: handle exception
+      }
+      
       System.out.println("--- Hello Client! Please Sign in! ---");
       System.out.println("Enter username: ");
       String username = input.nextLine();
@@ -196,7 +209,8 @@ public class MyClient {
       System.out.println("Authenticating...");
 
       try {
-         if (server.authenticate(username, password)) {
+         session = server.authenticate(username, password);
+         if (session != null) {
             System.out.println("Login successfull!");
             return true;
          } else {

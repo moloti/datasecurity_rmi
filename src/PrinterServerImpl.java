@@ -1,9 +1,15 @@
 package datasecurity_rmi.src;
 
 import java.rmi.server.UnicastRemoteObject;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Random;
+import java.util.Base64.Encoder;
 import java.rmi.RemoteException;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
@@ -14,6 +20,7 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     private static PrinterServerImpl server;
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
+    private static int session_deadline = 30;
 
     public PrinterServerImpl() throws RemoteException {
         userService = new UserService();
@@ -21,11 +28,17 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     }
 
     @Override
-    public boolean authenticate(String username, String password) throws RemoteException {
+    public String authenticate(String username, String password) throws RemoteException {
         if((!userMap.isEmpty()) || userMap.containsKey(username)){
-           return userService.verifyHash(password, userMap.get(username));
+            if(userService.verifyHash(password, userMap.get(username))){
+                String sessionkey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
+                userService.addSession(sessionkey, username);
+                return sessionkey;
+            }else{
+                return null;
+            }
         }else {
-           return false;
+           return null;
         }
     }
 
@@ -129,6 +142,35 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     public void registerNewPrinter(String printerName) {
         LinkedList<String> printerQueue = new LinkedList<>();
         printerMap.put(printerName, printerQueue);
+    }
+
+    private String generateSessionKey(Timestamp timestamp){
+        Random ranGen = new SecureRandom();
+        byte[] aesKey = new byte[32];
+        ranGen.nextBytes(aesKey);
+        Encoder encoder = Base64.getUrlEncoder().withoutPadding();
+        String token = encoder.encodeToString(aesKey);
+        String sessionkey =  timestamp.toString() + " " + token;
+        System.out.println(sessionkey);
+        return sessionkey;
+    }
+
+    @Override
+    public boolean checkSession(String session) throws RemoteException {
+        if (session != null && userService.getSessionMap().containsKey(session)){
+            Calendar cal = Calendar.getInstance();
+            String[] keys = session.split("\\s+");
+            java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(keys[0]);
+            cal.setTimeInMillis(timestamp.getTime());
+            cal.add(Calendar.SECOND, session_deadline);
+            Timestamp userSession = new Timestamp(cal.getTime().getTime());
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            System.out.println("Verifying session..");
+            return userSession.after(currentTime);
+        }else{
+            return false;
+        }
+        
     }
 
 }

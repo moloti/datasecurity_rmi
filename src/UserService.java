@@ -6,14 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class UserService {
     private static final String outputFilePath = System.getProperty("user.dir") + "/datasecurity_rmi/src/resources/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
+    private HashMap<String, String> sessionMap = new HashMap<>();
     private File file = null;
 
     public UserService() {
@@ -33,6 +31,14 @@ public class UserService {
 
     public HashMap<String, String> getUserMap() {
         return userMap;
+    }
+
+    public HashMap<String, String> getSessionMap() {
+        return sessionMap;
+    }
+
+    public void addSession(String user, String sessionkey){
+        sessionMap.put(user, sessionkey);
     }
 
     private void readUserMap() {

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 
 public interface PrinterServer extends Remote{
-    public boolean authenticate(String username, String password) throws RemoteException;
+    public String authenticate(String username, String password) throws RemoteException;
     public boolean print(String filename, String printer) throws RemoteException;   // prints file filename on the specified printer
     public LinkedList<String> queue(String printer) throws RemoteException;   // lists the print queue for a given printer on the user's display in lines of the form <job number>   <file name>
     public boolean topQueue(String printer, int job) throws RemoteException;   // moves job to the top of the queue
@@ -16,4 +16,5 @@ public interface PrinterServer extends Remote{
     public String readConfig(String parameter) throws RemoteException;   // prints the value of the parameter on the user's display
     public void setConfig(String parameter, String value) throws RemoteException;
     public void registerNewPrinter(String printerName) throws RemoteException;
+    public boolean checkSession(String session) throws RemoteException;
 }
