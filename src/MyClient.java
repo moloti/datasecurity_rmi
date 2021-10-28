@@ -19,6 +19,7 @@ public class MyClient {
          // Make reference to SSL-based registry
          Registry reg = LocateRegistry.getRegistry(InetAddress.getLocalHost().getHostName(), Registry.REGISTRY_PORT,
                new RMISSLClientSocketFactory());
+         
          // Get Printer server
          server = (PrinterServer) reg.lookup("PrinterServer");
          System.out.println("Client Connected to Server");
