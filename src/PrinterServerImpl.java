@@ -1,23 +1,23 @@
 package datasecurity_rmi.src;
 
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.lang.reflect.Parameter;
 import java.rmi.RemoteException;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
 
-    private String printerName = "";
-    private String fileName = "";
-    private ArrayList<String> printerList = new ArrayList<>();
     private HashMap<String, String> userMap = new HashMap<>();
     private UserService userService;
     private String status = "";
     private static PrinterServerImpl server;
+    private Map<String, LinkedList> printerMap = new HashMap<>();
+    private Map<String, String> parameterMap = new HashMap<>();
 
-    public PrinterServerImpl(String aName) throws RemoteException {
-        printerName = aName;
+    public PrinterServerImpl() throws RemoteException {
         userService = new UserService();
         userMap = userService.getUserMap();
     }
@@ -29,23 +29,44 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
         }else {
            return false;
         }
-        
     }
 
     @Override
-    public void print(String filename, String printer) throws RemoteException {
-        System.out.println(filename + " " + printer);
+    public boolean print(String filename, String printer) throws RemoteException {
+        System.out.println("Print: " + filename + ", with printer: " + printer);
+        if(printerMap.containsKey(printer)){
+            LinkedList<String> printerQueue = printerMap.get(printer);
+            printerQueue.add(filename);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override
-    public void queue(String printer) throws RemoteException {
-        // TODO Auto-generated method stub
-
+    public LinkedList<String> queue(String printer) throws RemoteException {
+        if(printerMap.containsKey(printer)){
+            LinkedList<String> printerQueue = printerMap.get(printer);
+            return printerQueue;
+        }else {
+            return null;
+        }
     }
 
     @Override
-    public void topQueue(String printer, int job) throws RemoteException {
-        // TODO Auto-generated method stub
+    public boolean topQueue(String printer, int job) throws RemoteException {
+        if(printerMap.containsKey(printer)){
+            LinkedList<String> printerQueue = printerMap.get(printer);
+            if(printerQueue.size()-1 >= job){
+                String removedItem = printerQueue.remove(job);
+                printerQueue.addFirst(removedItem);
+                return true;
+            }else{
+                return false;
+            }
+        }else {
+            return false;
+        }
 
     }
 
@@ -61,37 +82,55 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
     @Override
     public void stop() throws RemoteException {
         // TODO Auto-generated method stub
-        status = "idle";
+        status = "stopped";
+        printerMap = new HashMap<>();
+        System.out.println("Server stopped");
+        status = "";
     }
 
     @Override
     public void restart() throws RemoteException {
         // TODO Auto-generated method stub
-        status = "printing";
-
+        status = "restarted";
+        System.out.println("Server restarted");
+        printerMap = new HashMap<>();
+        status = "";
+        start();
     }
 
     @Override
-    public void status(String printer) throws RemoteException {
-        System.out.println("The printer:" + printer + "is " + status);
-
+    public String status(String printer) throws RemoteException {
+        if(printerMap.containsKey(printer)){
+            LinkedList<String> printerQueue = printerMap.get(printer);
+            if(printerQueue.isEmpty()){
+                return "idle";
+            }else{
+                System.out.println("Status Reported");
+                return "Printing and currently " + printerQueue.size() + " items in Queue.";
+            }
+        }else {
+            return "idle";
+        }
     }
 
     @Override
-    public void readConfig(String parameter) throws RemoteException {
-        // TODO Auto-generated method stub
-
+    public String readConfig(String parameter) throws RemoteException {
+        if(parameterMap.containsKey(parameter)){
+            return parameterMap.get(parameter);
+        }else{
+            return null;
+        }
     }
 
     @Override
     public void setConfig(String parameter, String value) throws RemoteException {
-        // TODO Auto-generated method stub
-
+        parameterMap.put(parameter, value);
     }
 
     @Override
     public void registerNewPrinter(String printerName) {
-        printerList.add(printerName);
+        LinkedList<String> printerQueue = new LinkedList<>();
+        printerMap.put(printerName, printerQueue);
     }
 
 }
