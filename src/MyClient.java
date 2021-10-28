@@ -59,7 +59,7 @@ public class MyClient {
       System.out.println("7 - Set Printer Configuration");
       System.out.println("8 - Quit");
 
-      selection = input.nextInt();
+      selection = Integer.parseInt(input.nextLine());
 
       switch (selection) {
       // prints file filename on the specified printer

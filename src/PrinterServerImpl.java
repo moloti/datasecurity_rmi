@@ -3,9 +3,7 @@ package datasecurity_rmi.src;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Parameter;
 import java.rmi.RemoteException;
 
 public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
