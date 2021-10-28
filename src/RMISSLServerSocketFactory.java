@@ -24,7 +24,7 @@ public class RMISSLServerSocketFactory implements RMIServerSocketFactory {
 
             char[] passphrase = "changeit".toCharArray();
             ks = KeyStore.getInstance("JKS");
-            String KeyFile = new File("").getAbsolutePath().toString() + "/datasecurity_rmi/src/keystore";
+            String KeyFile = new File("").getAbsolutePath().toString() + "/datasecurity_rmi/lib/security/cacerts/keystore";
             ks.load(new FileInputStream(KeyFile), passphrase);
 
             kmf = KeyManagerFactory.getInstance("SunX509");
