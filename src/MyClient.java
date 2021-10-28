@@ -210,6 +210,7 @@ public class MyClient {
 
       try {
          session = server.authenticate(username, password);
+         System.out.println(session);
          if (session != null) {
             System.out.println("Login successfull!");
             return true;

@@ -150,16 +150,18 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
         ranGen.nextBytes(aesKey);
         Encoder encoder = Base64.getUrlEncoder().withoutPadding();
         String token = encoder.encodeToString(aesKey);
-        String sessionkey =  timestamp.toString() + " " + token;
+        String sessionkey =  timestamp + ";" + token;
         System.out.println(sessionkey);
         return sessionkey;
     }
 
     @Override
     public boolean checkSession(String session) throws RemoteException {
+        System.out.println("Inside Check Session");
         if (session != null && userService.getSessionMap().containsKey(session)){
+            System.out.println("Inside inside check session");
             Calendar cal = Calendar.getInstance();
-            String[] keys = session.split("\\s+");
+            String[] keys = session.split(";");
             java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(keys[0]);
             cal.setTimeInMillis(timestamp.getTime());
             cal.add(Calendar.SECOND, session_deadline);
