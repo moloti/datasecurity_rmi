@@ -10,74 +10,84 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Base64.Encoder;
+
+import javax.naming.AuthenticationException;
+
 import java.rmi.RemoteException;
 
-public class PrinterServerImpl extends UnicastRemoteObject implements PrinterServer {
+public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
     private HashMap<String, String> userMap = new HashMap<>();
     private UserService userService;
     private String status = "";
-    private static PrinterServerImpl server;
+    private static PrinterServiceImpl service;
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
-    private static int session_deadline = 30;
+    private static int session_deadline = 60;
 
-    public PrinterServerImpl() throws RemoteException {
+    public PrinterServiceImpl() throws RemoteException {
         userService = new UserService();
         userMap = userService.getUserMap();
     }
 
     @Override
     public String authenticate(String username, String password) throws RemoteException {
-        if((!userMap.isEmpty()) || userMap.containsKey(username)){
-            if(userService.verifyHash(password, userMap.get(username))){
+        if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
+            if (userService.verifyHash(password, userMap.get(username))) {
                 String sessionkey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
                 userService.addSession(sessionkey, username);
                 return sessionkey;
-            }else{
+            } else {
                 return null;
             }
-        }else {
-           return null;
-        }
-    }
-
-    @Override
-    public boolean print(String filename, String printer) throws RemoteException {
-        System.out.println("Print: " + filename + ", with printer: " + printer);
-        if(printerMap.containsKey(printer)){
-            LinkedList<String> printerQueue = printerMap.get(printer);
-            printerQueue.add(filename);
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    @Override
-    public LinkedList<String> queue(String printer) throws RemoteException {
-        if(printerMap.containsKey(printer)){
-            LinkedList<String> printerQueue = printerMap.get(printer);
-            return printerQueue;
-        }else {
+        } else {
             return null;
         }
     }
 
     @Override
-    public boolean topQueue(String printer, int job) throws RemoteException {
-        if(printerMap.containsKey(printer)){
+    public boolean print(String token, String filename, String printer)
+            throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+            System.out.println("Print: " + filename + ", with printer: " + printer);
+            if (printerMap.containsKey(printer)) {
+                LinkedList<String> printerQueue = printerMap.get(printer);
+                printerQueue.add(filename);
+                return true;
+            } else {
+                return false;
+            }
+        }else throw new AuthenticationException();
+    }
+
+    @Override
+    public LinkedList<String> queue(String token, String printer) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+        if (printerMap.containsKey(printer)) {
             LinkedList<String> printerQueue = printerMap.get(printer);
-            if(printerQueue.size()-1 >= job){
+            return printerQueue;
+        } else {
+            return null;
+        }
+    }else throw new AuthenticationException();
+    }
+
+    @Override
+    public boolean topQueue(String token, String printer, int job) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+        if (printerMap.containsKey(printer)) {
+            LinkedList<String> printerQueue = printerMap.get(printer);
+            if (printerQueue.size() - 1 >= job) {
                 String removedItem = printerQueue.remove(job);
                 printerQueue.addFirst(removedItem);
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else {
+        } else {
             return false;
         }
+    }else throw new AuthenticationException();
 
     }
 
@@ -87,81 +97,89 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
         status = "started";
         registerNewPrinter("Printer1");
         registerNewPrinter("Printer2");
-        System.out.println("Server Started");
+        System.out.println("Printer Service Started");
     }
 
     @Override
-    public void stop() throws RemoteException {
-        // TODO Auto-generated method stub
+    public void stop(String token) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
         status = "stopped";
         printerMap = new HashMap<>();
-        System.out.println("Server stopped");
+        System.out.println("Printer Service stopped");
         status = "";
+    }else throw new AuthenticationException();
     }
 
     @Override
-    public void restart() throws RemoteException {
+    public void restart(String token) throws RemoteException, AuthenticationException {
         // TODO Auto-generated method stub
+        if (checkToken(token)) {
         status = "restarted";
-        System.out.println("Server restarted");
+        System.out.println("Printer Service restarted");
         printerMap = new HashMap<>();
         status = "";
         start();
+    }else throw new AuthenticationException();
     }
 
     @Override
-    public String status(String printer) throws RemoteException {
-        if(printerMap.containsKey(printer)){
+    public String status(String token, String printer) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+        if (printerMap.containsKey(printer)) {
             LinkedList<String> printerQueue = printerMap.get(printer);
-            if(printerQueue.isEmpty()){
+            if (printerQueue.isEmpty()) {
                 return "idle";
-            }else{
+            } else {
                 System.out.println("Status Reported");
                 return "Printing and currently " + printerQueue.size() + " items in Queue.";
             }
-        }else {
+        } else {
             return "idle";
         }
+    }else throw new AuthenticationException();
     }
 
     @Override
-    public String readConfig(String parameter) throws RemoteException {
-        if(parameterMap.containsKey(parameter)){
+    public String readConfig(String token, String parameter) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+        if (parameterMap.containsKey(parameter)) {
             return parameterMap.get(parameter);
-        }else{
+        } else {
             return null;
         }
+    }else throw new AuthenticationException();
     }
 
     @Override
-    public void setConfig(String parameter, String value) throws RemoteException {
+    public void setConfig(String token, String parameter, String value) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
         parameterMap.put(parameter, value);
+    }else throw new AuthenticationException();
     }
 
-    @Override
-    public void registerNewPrinter(String printerName) {
+    private void registerNewPrinter(String printerName) {
         LinkedList<String> printerQueue = new LinkedList<>();
         printerMap.put(printerName, printerQueue);
     }
 
-    private String generateSessionKey(Timestamp timestamp){
+    private String generateSessionKey(Timestamp timestamp) {
         Random ranGen = new SecureRandom();
         byte[] aesKey = new byte[32];
         ranGen.nextBytes(aesKey);
         Encoder encoder = Base64.getUrlEncoder().withoutPadding();
         String token = encoder.encodeToString(aesKey);
-        String sessionkey =  timestamp + ";" + token;
+        String sessionkey = timestamp + ";" + token;
         System.out.println(sessionkey);
         return sessionkey;
     }
 
     @Override
-    public boolean checkSession(String session) throws RemoteException {
+    public boolean checkToken(String token) throws RemoteException {
         System.out.println("Inside Check Session");
-        if (session != null && userService.getSessionMap().containsKey(session)){
+        if (token != null && userService.getSessionMap().containsKey(token)) {
             System.out.println("Inside inside check session");
             Calendar cal = Calendar.getInstance();
-            String[] keys = session.split(";");
+            String[] keys = token.split(";");
             java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(keys[0]);
             cal.setTimeInMillis(timestamp.getTime());
             cal.add(Calendar.SECOND, session_deadline);
@@ -169,10 +187,10 @@ public class PrinterServerImpl extends UnicastRemoteObject implements PrinterSer
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             System.out.println("Verifying session..");
             return userSession.after(currentTime);
-        }else{
+        } else {
             return false;
         }
-        
+
     }
 
 }

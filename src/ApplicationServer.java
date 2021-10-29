@@ -7,10 +7,11 @@ import java.rmi.registry.Registry;
 public class ApplicationServer {
     public static void main(String[] args) {
         try {
-            PrinterServer server = new PrinterServerImpl();
+            PrinterService server = new PrinterServiceImpl();
             Registry reg = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-            reg.rebind("PrinterServer", server);
-            System.out.println("Server Started");
+            reg.rebind("PrinterService", server);
+            server.start();
+            System.out.println("Service Started");
         } catch (RemoteException e) {
             e.printStackTrace();
         }
