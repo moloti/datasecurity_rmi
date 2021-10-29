@@ -23,8 +23,8 @@ public class MyClient {
          // Start Registry
          Registry reg = LocateRegistry.getRegistry();
          // Get Printer server
-         server = (PrinterService) reg.lookup("PrinterServer");
-         System.out.println("Client Connected to Server");
+         server = (PrinterService) reg.lookup("PrinterService");
+         System.out.println("Client Connected to Printer Service");
 
          while (!cancel) {
             authenticated = false;
