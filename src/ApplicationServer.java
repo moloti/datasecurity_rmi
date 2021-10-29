@@ -22,10 +22,10 @@ public class ApplicationServer extends UnicastRemoteObject {
             Registry registry = LocateRegistry.createRegistry(
                     Registry.REGISTRY_PORT/* , new RMISSLClientSocketFactory(), new RMISSLServerSocketFactory() */);
 
-            PrinterServer server = new PrinterServerImpl("");
+            PrinterService server = new PrinterServiceImpl();
 
             // Bind this object instance to the name "HelloServer"
-            registry.rebind("PrinterServer", server);
+            registry.rebind("PrinterService", server);
 
             System.out.println("Server Started");
         } catch (Exception e) {
