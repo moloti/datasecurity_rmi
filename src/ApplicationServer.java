@@ -12,15 +12,15 @@ import datasecurity_rmi.src.RMISSLServerSocketFactory;
 public class ApplicationServer extends UnicastRemoteObject {
 
     public ApplicationServer() throws Exception {
-        super(Registry.REGISTRY_PORT, new RMISSLClientSocketFactory(), new RMISSLServerSocketFactory());
+        super(Registry.REGISTRY_PORT/* , new RMISSLClientSocketFactory(), new RMISSLServerSocketFactory() */);
     }
 
     public static void main(String[] args) {
 
         try {
             // Create SSL-based registry
-            Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT, new RMISSLClientSocketFactory(),
-                    new RMISSLServerSocketFactory());
+            Registry registry = LocateRegistry.createRegistry(
+                    Registry.REGISTRY_PORT/* , new RMISSLClientSocketFactory(), new RMISSLServerSocketFactory() */);
 
             PrinterServer server = new PrinterServerImpl("");
 
