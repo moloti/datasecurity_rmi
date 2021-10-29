@@ -58,10 +58,10 @@ public class MyClient {
       }
 
       System.out.println("--- Hello Client! Please Sign in! ---");
-      System.out.println("Enter username: ");
+      System.out.println("Enter username: (For the purpose of the exerice, use: Thomas)");
       String username = input.nextLine();
 
-      System.out.println("Enter password: ");
+      System.out.println("Enter password: (For the purpose of the exerice, use: 1234)");
       String password = input.nextLine();
 
       System.out.println("Authenticating...");
