@@ -1,0 +1,37 @@
+title RMI Authentication
+
+
+participantspacing equal
+participant MyClient
+database RMI Registry
+participant Application Server
+participant Printer Server
+participant Printer
+
+parallel 
+note over MyClient:Stub
+note over RMI Registry:
+note over Application Server:
+note over Printer Server:Skeleton
+parallel off
+
+Application Server->RMI Registry:Naming.bind(Printerserver)
+Application Server<--RMI Registry:response
+Application Server->Printer Server:starts server
+
+MyClient->RMI Registry:Naming.lookup()
+MyClient<--RMI Registry:sends ip-addres
+
+
+MyClient->Printer Server:requests Service
+MyClient<--Printer Server:requests authentication
+MyClient->Printer Server:authenticates with username and password
+MyClient<--Printer Server:verifies MyClient
+
+
+MyClient->Printer Server:calls Methodes
+Printer Server->>Printer:transmits commands
+Printer Server<<--Printer:responses with status
+
+MyClient<--Printer Server:rresponses with status
+
