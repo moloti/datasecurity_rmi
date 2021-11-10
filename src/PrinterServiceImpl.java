@@ -26,8 +26,28 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private static int session_deadline = 60;
 
     public PrinterServiceImpl() throws RemoteException {
+        // user initialization
         userService = new UserService();
         userMap = userService.getUserMap();
+        System.out.println(
+                "enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol.");
+        Scanner input = new Scanner(System.in);
+        String accessPolicy = input.next();
+        if (accessPolicy.equalsIgnoreCase("ACL")) {
+            System.out.println("Access Control List specified..\nReading ACL file..");
+            ACL = true;
+            policy = 1;
+            readFile(new File("acl.yml"));
+        }
+        else if (accessPolicy.equalsIgnoreCase("RBAC")) {
+            System.out.println("Role Based Access Control specified..\nReading RBAC file..");
+            ACL = false;
+            policy = 1;
+            readFile(new File("rbac.yml"));
+        }
+        else {
+            System.out.println("Unknown access policy..\nEnter either 'ACL' or 'RBAC'");
+        }
     }
 
     @Override
@@ -57,37 +77,40 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             } else {
                 return false;
             }
-        }else throw new AuthenticationException();
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
     public LinkedList<String> queue(String token, String printer) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        if (printerMap.containsKey(printer)) {
-            LinkedList<String> printerQueue = printerMap.get(printer);
-            return printerQueue;
-        } else {
-            return null;
-        }
-    }else throw new AuthenticationException();
+            if (printerMap.containsKey(printer)) {
+                LinkedList<String> printerQueue = printerMap.get(printer);
+                return printerQueue;
+            } else {
+                return null;
+            }
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
     public boolean topQueue(String token, String printer, int job) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        if (printerMap.containsKey(printer)) {
-            LinkedList<String> printerQueue = printerMap.get(printer);
-            if (printerQueue.size() - 1 >= job) {
-                String removedItem = printerQueue.remove(job);
-                printerQueue.addFirst(removedItem);
-                return true;
+            if (printerMap.containsKey(printer)) {
+                LinkedList<String> printerQueue = printerMap.get(printer);
+                if (printerQueue.size() - 1 >= job) {
+                    String removedItem = printerQueue.remove(job);
+                    printerQueue.addFirst(removedItem);
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
-            return false;
-        }
-    }else throw new AuthenticationException();
+        } else
+            throw new AuthenticationException();
 
     }
 
@@ -103,58 +126,64 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     @Override
     public void stop(String token) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        status = "stopped";
-        printerMap = new HashMap<>();
-        System.out.println("Printer Service stopped");
-        status = "";
-    }else throw new AuthenticationException();
+            status = "stopped";
+            printerMap = new HashMap<>();
+            System.out.println("Printer Service stopped");
+            status = "";
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
     public void restart(String token) throws RemoteException, AuthenticationException {
         // TODO Auto-generated method stub
         if (checkToken(token)) {
-        status = "restarted";
-        System.out.println("Printer Service restarted");
-        printerMap = new HashMap<>();
-        status = "";
-        start();
-    }else throw new AuthenticationException();
+            status = "restarted";
+            System.out.println("Printer Service restarted");
+            printerMap = new HashMap<>();
+            status = "";
+            start();
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
     public String status(String token, String printer) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        if (printerMap.containsKey(printer)) {
-            LinkedList<String> printerQueue = printerMap.get(printer);
-            if (printerQueue.isEmpty()) {
-                return "idle";
+            if (printerMap.containsKey(printer)) {
+                LinkedList<String> printerQueue = printerMap.get(printer);
+                if (printerQueue.isEmpty()) {
+                    return "idle";
+                } else {
+                    System.out.println("Status Reported");
+                    return "Printing and currently " + printerQueue.size() + " items in Queue.";
+                }
             } else {
-                System.out.println("Status Reported");
-                return "Printing and currently " + printerQueue.size() + " items in Queue.";
+                return "idle";
             }
-        } else {
-            return "idle";
-        }
-    }else throw new AuthenticationException();
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
     public String readConfig(String token, String parameter) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        if (parameterMap.containsKey(parameter)) {
-            return parameterMap.get(parameter);
-        } else {
-            return null;
-        }
-    }else throw new AuthenticationException();
+            if (parameterMap.containsKey(parameter)) {
+                return parameterMap.get(parameter);
+            } else {
+                return null;
+            }
+        } else
+            throw new AuthenticationException();
     }
 
     @Override
-    public void setConfig(String token, String parameter, String value) throws RemoteException, AuthenticationException {
+    public void setConfig(String token, String parameter, String value)
+            throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-        parameterMap.put(parameter, value);
-    }else throw new AuthenticationException();
+            parameterMap.put(parameter, value);
+        } else
+            throw new AuthenticationException();
     }
 
     private void registerNewPrinter(String printerName) {

@@ -9,24 +9,56 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class UserService {
-    private static final String outputFilePath = System.getProperty("user.dir") + "/datasecurity_rmi/src/resources/pass.txt";
+    private static final String outputFilePath = System.getProperty("user.dir")
+            + "/datasecurity_rmi/src/resources/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
     private HashMap<String, String> sessionMap = new HashMap<>();
+    private String[] roles = null;
     private File file = null;
 
     public UserService() {
 
-        if(file != null){
-        if (file.exists() && !file.isDirectory()) {
-            readUserMap();
+        if (file != null) {
+            if (file.exists() && !file.isDirectory()) {
+                readUserMap();
+            } else {
+                createUser("Alice", "spain", new String[] { "manager" });
+                // createUser("Bob", "italy", new String[] { "technician" });
+                createUser("Cecilia", "france", new String[] { "poweruser" });
+                createUser("David", "germany", new String[] { "user" });
+                createUser("Erica", "denmark", new String[] { "user" });
+                createUser("Fred", "hungary", new String[] { "user" });
+                createUser("George", "finland", new String[] { "user", "technician" });
+                createUser("Henyr", "sweden", new String[] { "user" });
+                createUser("Ida", "norway", new String[] { "poweruser" });
+                // Bob leaves the company, George takes over his duties.
+                // Henry and ida recruited -> Henry is user, Ida is a poweruser
+
+                // MANAGER -> all operations ---- Alice is managing the print server, so she has
+                // the rights to perform all operations
+                // ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                // TECHNICIAN -> start, stop restart print server, inspect and change service
+                // parameters, invoke status, redConfig and setConfig operations ------
+                // Bob is the janitor who doubles as service technician, he has the rights to
+                // START,
+                // STOP and RESTART the print server as well as inspect and modify the service
+                // parameters, i.e., invoke the status, readConfig and setConfig operations
+                // ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                // POWER USER -> print files, manage print queue (queue, topQueue, restart print
+                // server) ----- Cecilia is a power user, who is allowed to print files and
+                // manage the print queue, i.e., use queue and topQueue as well as restart the
+                // print server when everything seems to be stuck
+                // ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+                // USER -> print files and display print queue ---- David, Erica, Fred and
+                // George are ordinary users who are only allowed to print files and display the
+                // print queue.
+
+            }
         } else {
+            System.out.println(outputFilePath);
             createUser("Thomas", "1234");
+            System.out.println("User Creation Finished");
         }
-    }else{
-        System.out.println(outputFilePath);
-        createUser("Thomas", "1234");
-        System.out.println("User Creation Finished");
-    }
     }
 
     public HashMap<String, String> getUserMap() {
@@ -37,7 +69,7 @@ public class UserService {
         return sessionMap;
     }
 
-    public void addSession(String user, String sessionkey){
+    public void addSession(String user, String sessionkey) {
         sessionMap.put(user, sessionkey);
     }
 
@@ -47,14 +79,19 @@ public class UserService {
         }
     }
 
-    public void createUser(String username, String password) {
+    public void createUser(String username, String password, String[] newRoles) {
 
         userMap.put(username, hash(password));
         System.out.println("Create User");
         if (file == null) {
             file = new File(outputFilePath);
         }
+        roles = newRoles;
         writeFile(file);
+    }
+
+    private String[] getRoles() {
+        return roles;
     }
 
     private String hash(String password) {
