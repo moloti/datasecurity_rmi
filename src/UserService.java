@@ -17,7 +17,6 @@ public class UserService {
     private File file = null;
 
     public UserService() {
-
         if (file != null) {
             if (file.exists() && !file.isDirectory()) {
                 readUserMap();
@@ -56,7 +55,7 @@ public class UserService {
             }
         } else {
             System.out.println(outputFilePath);
-            createUser("Thomas", "1234");
+            createUser("Thomas", "1234", new String[] { "manager" });
             System.out.println("User Creation Finished");
         }
     }
@@ -90,7 +89,7 @@ public class UserService {
         writeFile(file);
     }
 
-    private String[] getRoles() {
+    public String[] getRoles() {
         return roles;
     }
 

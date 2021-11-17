@@ -1,8 +1,12 @@
 package datasecurity_rmi.src;
 
 import java.rmi.server.UnicastRemoteObject;
+import java.io.FileReader;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.File;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -10,6 +14,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Base64.Encoder;
+import java.util.*;
+
 
 import javax.naming.AuthenticationException;
 
@@ -24,7 +30,8 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
     private static int session_deadline = 60;
-    private static HashMap<String, List<String>> user_roles;
+    private static HashMap<String, List<String>> server_roles;
+    private boolean ACL;
 
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
@@ -41,30 +48,92 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         if (accessPolicy.equalsIgnoreCase("ACL")) {
             System.out.println("Access Control List specified..\nReading ACL file..");
             ACL = true;
-            Yaml yaml = new Yaml();
-            FileInputStream fis = new FileInputStream(new File("ressources/acl.yml"));
-            user_roles = (HashMap<String, List<String>>) yaml.load(fis);
-            fis.close();
+            File file = new File("ressources/acl.txt");
+            readAccessFile(file);
             // Otherwise, we need to read the rbac file.
         } else if (accessPolicy.equalsIgnoreCase("RBAC")) {
             System.out.println("Role Based Access Control specified..\nReading RBAC file..");
             ACL = false;
-            Yaml yaml = new Yaml();
-            FileInputStream fis = new FileInputStream(new File("ressources/rbac.yml"));
-            user_roles = (HashMap<String, List<String>>) yaml.load(fis);
-            fis.close();
+            File file = new File("ressources/rbac.txt");
+            readAccessFile(file);
         } else {
             System.out.println("Access policy not known, try again.");
         }
     }
 
-    private static boolean AccessVerificiationRBAC(String[] rs, String operation) {
-        for (int i = 0; i < rs.length; i++) {
-            if (roles.get(rs[i]).contains(operation)) {
+    private void readAccessFile(File file){
+        BufferedReader br = null;
+
+        try {
+
+            // create BufferedReader object from the File
+            br = new BufferedReader(new FileReader(file));
+
+            String line = null;
+
+            // read file line by line
+            while ((line = br.readLine()) != null) {
+                if (ACL){
+                    String[] parts = line.split(":");
+                    String operation = parts[0].trim();
+                    String allowed_users_str = parts[1].trim();
+                    String[] allowed_users_parts = allowed_users_str.split("-");
+                    // List<String> list = Arrays.asList(new String[]{"foo", "bar"});
+                    List<String> allowed_users = Arrays.asList(new String[allowed_users_parts.length]);
+                    for (int i=0; i<allowed_users_parts.length; i++){
+                        allowed_users.add(allowed_users_parts[i].trim());
+                    }
+                    server_roles.put(operation, allowed_users);
+                }
+                else{
+                    String[] parts = line.split(":");
+                    String role = parts[0].trim();
+                    String allowed_operations_str = parts[1].trim();
+                    String[] allowed_operations_parts = allowed_operations_str.split("-");
+                    List<String> allowed_operations = Arrays.asList(new String[allowed_operations_parts.length]);
+                    for (int i=0; i<allowed_operations_parts.length; i++){
+                        // allowed_operations[i] = allowed_operations_parts[i].trim();
+                        allowed_operations.add(allowed_operations_parts[i].trim());
+                    }
+                    server_roles.put(role, allowed_operations);
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            // Always close the BufferedReader
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                }
+                ;
+            }
+        }
+    }
+
+    private static boolean AccessVerificiationRBAC(String[] current_user_roles, String operation) {
+        // We go through all the current user roles, and check if the server roles allow
+        // this operation
+        for (int i = 0; i < current_user_roles.length; i++) {
+            if (server_roles.get(current_user_roles[i]).contains(operation)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean VerifyRole(String operation, String logged_in_user) {
+        String[] user_roles = userService.getRoles();
+        if (ACL) {
+            System.out.println("acl");
+            return true;
+        } else {
+            // return true if access allowed, otherwise it returns false
+            return AccessVerificiationRBAC(user_roles, operation);
+        }
     }
 
     @Override
