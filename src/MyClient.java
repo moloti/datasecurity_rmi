@@ -15,6 +15,7 @@ import java.rmi.registry.Registry;
 public class MyClient {
    private static PrinterService server;
    private static String session;
+   private static String logged_in_username;
 
    public static void main(String[] args) throws Exception {
       boolean cancel = false;
@@ -71,6 +72,7 @@ public class MyClient {
          System.out.println(session);
          if (session != null) {
             System.out.println("Login successfull!");
+            logged_in_username = username;
             return true;
          } else {
             System.out.println("Access Denied");
@@ -102,7 +104,12 @@ public class MyClient {
       switch (selection) {
       // prints file filename on the specified printer
       case 1:
-         print(input);
+         boolean access = server.VerifyRole("print", logged_in_username);
+         if (access) {
+            print(input);
+         } else {
+            System.out.println("You are not authorized to perform this action");
+         }
          break;
       // lists the print queue for a given printer on the user's display in lines of
       // the form <job number> <file name>
