@@ -24,30 +24,47 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
     private static int session_deadline = 60;
+    private static HashMap<String, List<String>> user_roles;
 
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
         userService = new UserService();
         userMap = userService.getUserMap();
+        // Ask the user what role method they want to go for
         System.out.println(
                 "enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol.");
         Scanner input = new Scanner(System.in);
         String accessPolicy = input.next();
+        // Il they choose ACL, we need to go for the acl file where we have the roles,
+        // and attach roles to the user_roles variable so that later, we can decide if
+        // the user has authorization for a specific operation.
         if (accessPolicy.equalsIgnoreCase("ACL")) {
             System.out.println("Access Control List specified..\nReading ACL file..");
             ACL = true;
-            policy = 1;
-            readFile(new File("acl.yml"));
-        }
-        else if (accessPolicy.equalsIgnoreCase("RBAC")) {
+            Yaml yaml = new Yaml();
+            FileInputStream fis = new FileInputStream(new File("ressources/acl.yml"));
+            user_roles = (HashMap<String, List<String>>) yaml.load(fis);
+            fis.close();
+            // Otherwise, we need to read the rbac file.
+        } else if (accessPolicy.equalsIgnoreCase("RBAC")) {
             System.out.println("Role Based Access Control specified..\nReading RBAC file..");
             ACL = false;
-            policy = 1;
-            readFile(new File("rbac.yml"));
+            Yaml yaml = new Yaml();
+            FileInputStream fis = new FileInputStream(new File("ressources/rbac.yml"));
+            user_roles = (HashMap<String, List<String>>) yaml.load(fis);
+            fis.close();
+        } else {
+            System.out.println("Access policy not known, try again.");
         }
-        else {
-            System.out.println("Unknown access policy..\nEnter either 'ACL' or 'RBAC'");
+    }
+
+    private static boolean AccessVerificiationRBAC(String[] rs, String operation) {
+        for (int i = 0; i < rs.length; i++) {
+            if (roles.get(rs[i]).contains(operation)) {
+                return true;
+            }
         }
+        return false;
     }
 
     @Override
