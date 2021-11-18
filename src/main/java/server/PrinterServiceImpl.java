@@ -80,7 +80,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                     String allowed_users_str = parts[1].trim();
                     String[] allowed_users_parts = allowed_users_str.split("-");
                     // List<String> list = Arrays.asList(new String[]{"foo", "bar"});
-                    List<String> allowed_users = Arrays.asList(new String[allowed_users_parts.length]);
+                    List<String> allowed_users = new ArrayList<String>();
                     for (int i=0; i<allowed_users_parts.length; i++){
                         allowed_users.add(allowed_users_parts[i].trim());
                     }
