@@ -19,6 +19,7 @@ public class MyClient {
     private static String session;
     private static String logged_in_username;
 
+
     public static void main(String[] args) throws Exception {
         boolean cancel = false;
         boolean authenticated = false;
@@ -112,6 +113,7 @@ public class MyClient {
                     print(input);
                 } else {
                     System.out.println("You are not authorized to perform this action");
+                    chooseAction();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class UserService {
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
+    private HashMap<String, String[]> userRoles = new HashMap<>();
     private HashMap<String, String> sessionMap = new HashMap<>();
     private String[] roles = null;
     private File file = null;
@@ -21,13 +22,13 @@ public class UserService {
                 readUserMap();
             } else {
                 createUser("Alice", "spain", new String[] { "manager" });
-                // createUser("Bob", "italy", new String[] { "technician" });
+                createUser("Bob", "italy", new String[] { "technician" });
                 createUser("Cecilia", "france", new String[] { "poweruser" });
                 createUser("David", "germany", new String[] { "user" });
                 createUser("Erica", "denmark", new String[] { "user" });
                 createUser("Fred", "hungary", new String[] { "user" });
                 createUser("George", "finland", new String[] { "user", "technician" });
-                createUser("Henyr", "sweden", new String[] { "user" });
+                createUser("Henry", "sweden", new String[] { "user" });
                 createUser("Ida", "norway", new String[] { "poweruser" });
                 // Bob leaves the company, George takes over his duties.
                 // Henry and ida recruited -> Henry is user, Ida is a poweruser
@@ -54,7 +55,7 @@ public class UserService {
             }
         } else {
             createUser("Alice", "spain", new String[] { "manager" });
-            // createUser("Bob", "italy", new String[] { "technician" });
+            createUser("Bob", "italy", new String[] { "technician" });
             createUser("Cecilia", "france", new String[] { "poweruser" });
             createUser("David", "germany", new String[] { "user" });
             createUser("Erica", "denmark", new String[] { "user" });
@@ -85,7 +86,7 @@ public class UserService {
     }
 
     public void createUser(String username, String password, String[] newRoles) {
-
+        userRoles.put(username, newRoles);
         userMap.put(username, hash(password));
         System.out.println("Create User");
         if (file == null) {
@@ -96,7 +97,7 @@ public class UserService {
     }
 
     public String[] getRoles() {
-        return roles;
+        return userRoles.get(sessionMap.keySet().toArray()[0]);
     }
 
     private String hash(String password) {

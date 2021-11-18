@@ -28,7 +28,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
     private static int session_deadline = 60;
-    private static HashMap<String, List<String>> server_roles;
+    public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
 
@@ -62,7 +62,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     private void readAccessFile(File file) {
         BufferedReader br = null;
-        HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
         try {
 
             // create BufferedReader object from the File
@@ -93,7 +92,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                     }
                     server_roles.put(role, allowed_operations);
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,11 +108,11 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    private static boolean AccessVerificiationRBAC(String[] current_user_roles, String operation) {
+    public static boolean AccessVerificiationRBAC(ArrayList<String> current_user_roles, String operation) {
         // We go through all the current user roles, and check if the server roles allow
         // this operation
-        for (int i = 0; i < current_user_roles.length; i++) {
-            if (server_roles.get(current_user_roles[i]).contains(operation)) {
+        for (int i = 0; i < current_user_roles.size(); i++) {
+            if (server_roles.get(current_user_roles.get(i)).contains(operation)) {
                 return true;
             }
         }
@@ -122,9 +120,8 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
-        String[] user_roles = userService.getRoles();
+        ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getRoles()));
         if (ACL) {
-            System.out.println("acl");
             return true;
         } else {
             // return true if access allowed, otherwise it returns false
@@ -137,7 +134,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
             if (userService.verifyHash(password, userMap.get(username))) {
                 String sessionkey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
-                userService.addSession(sessionkey, username);
+                userService.addSession(username, sessionkey);
                 return sessionkey;
             } else {
                 return null;
