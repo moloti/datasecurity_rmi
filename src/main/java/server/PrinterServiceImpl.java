@@ -15,7 +15,6 @@ import java.util.Random;
 import java.util.Base64.Encoder;
 import java.util.*;
 
-
 import javax.naming.AuthenticationException;
 
 import java.rmi.RemoteException;
@@ -31,8 +30,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private static int session_deadline = 60;
     private static HashMap<String, List<String>> server_roles;
     private boolean ACL;
-    private static final String outputFilePath = System.getProperty("user.dir")
-            + "/src/main/resources/";
+    private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
 
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
@@ -62,9 +60,9 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    private void readAccessFile(File file){
+    private void readAccessFile(File file) {
         BufferedReader br = null;
-
+        HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
         try {
 
             // create BufferedReader object from the File
@@ -74,26 +72,23 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
             // read file line by line
             while ((line = br.readLine()) != null) {
-                if (ACL){
+                if (ACL) {
                     String[] parts = line.split(":");
                     String operation = parts[0].trim();
                     String allowed_users_str = parts[1].trim();
                     String[] allowed_users_parts = allowed_users_str.split("-");
-                    // List<String> list = Arrays.asList(new String[]{"foo", "bar"});
-                    List<String> allowed_users = Arrays.asList(new String[allowed_users_parts.length]);
-                    for (int i=0; i<allowed_users_parts.length; i++){
+                    List<String> allowed_users = new ArrayList<String>();
+                    for (int i = 0; i < allowed_users_parts.length; i++) {
                         allowed_users.add(allowed_users_parts[i].trim());
                     }
                     server_roles.put(operation, allowed_users);
-                }
-                else{
+                } else {
                     String[] parts = line.split(":");
                     String role = parts[0].trim();
                     String allowed_operations_str = parts[1].trim();
                     String[] allowed_operations_parts = allowed_operations_str.split("-");
-                    List<String> allowed_operations = Arrays.asList(new String[allowed_operations_parts.length]);
-                    for (int i=0; i<allowed_operations_parts.length; i++){
-                        // allowed_operations[i] = allowed_operations_parts[i].trim();
+                    List<String> allowed_operations = new ArrayList<String>();
+                    for (int i = 0; i < allowed_operations_parts.length; i++) {
                         allowed_operations.add(allowed_operations_parts[i].trim());
                     }
                     server_roles.put(role, allowed_operations);

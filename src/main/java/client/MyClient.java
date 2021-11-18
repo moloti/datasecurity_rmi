@@ -104,50 +104,50 @@ public class MyClient {
         selection = Integer.parseInt(input.nextLine());
 
         switch (selection) {
-            // prints file filename on the specified printer
-            case 1:
-                try {
-                    boolean access = server.VerifyRole("print", logged_in_username);
-                    if (access) {
-                        print(input);
-                    } else {
-                        System.out.println("You are not authorized to perform this action");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        // prints file filename on the specified printer
+        case 1:
+            try {
+                boolean access = server.VerifyRole("print", logged_in_username);
+                if (access) {
+                    print(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
                 }
-                break;
-            // lists the print queue for a given printer on the user's display in lines of
-            // the form <job number> <file name>
-            case 2:
-                queue(input);
-                break;
-            // moves job to the top of the queue
-            case 3:
-                topQueue(input);
-                break;
-            // stops the print server, clears the print queue and starts the print server
-            // again
-            case 4:
-                restart(input);
-                break;
-            // prints status of printer on the user's display
-            case 5:
-                status(input);
-                break;
-            // prints the value of the parameter on the user's display
-            case 6:
-                readConfig(input);
-                break;
-            // sets the printer configuration in parameters
-            case 7:
-                setConfig(input);
-                break;
-            // cancel the selection
-            case 8:
-                break;
-            default:
-                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            break;
+        // lists the print queue for a given printer on the user's display in lines of
+        // the form <job number> <file name>
+        case 2:
+            queue(input);
+            break;
+        // moves job to the top of the queue
+        case 3:
+            topQueue(input);
+            break;
+        // stops the print server, clears the print queue and starts the print server
+        // again
+        case 4:
+            restart(input);
+            break;
+        // prints status of printer on the user's display
+        case 5:
+            status(input);
+            break;
+        // prints the value of the parameter on the user's display
+        case 6:
+            readConfig(input);
+            break;
+        // sets the printer configuration in parameters
+        case 7:
+            setConfig(input);
+            break;
+        // cancel the selection
+        case 8:
+            break;
+        default:
+            break;
         }
 
         return false;
