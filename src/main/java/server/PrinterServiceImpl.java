@@ -81,6 +81,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                         allowed_users.add(allowed_users_parts[i].trim());
                     }
                     server_roles.put(operation, allowed_users);
+                    System.out.println(server_roles);
                 } else {
                     String[] parts = line.split(":");
                     String role = parts[0].trim();
@@ -119,10 +120,19 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         return false;
     }
 
+    public static boolean AccessVerificiationACL(String logged_in_user, String current_operation) {
+        // We check if the current operation allows this user
+        if (server_roles.get(current_operation).contains(logged_in_user)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
         ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getRoles()));
         if (ACL) {
-            return true;
+            return AccessVerificiationACL(logged_in_user, operation);
         } else {
             // return true if access allowed, otherwise it returns false
             return AccessVerificiationRBAC(user_roles, operation);
