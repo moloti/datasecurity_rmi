@@ -1,0 +1,9 @@
+print:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
+queue:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
+topQueue:Alice-Cecilia-George-Ida
+start:Alice-George
+stop:Alice-George
+restart:Alice-Cecilia-Ida
+status:Alice-George
+readConfig:Alice-George
+setConfig:Alice-George
