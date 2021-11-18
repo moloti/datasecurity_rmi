@@ -6,7 +6,6 @@ import java.rmi.registry.Registry;
 import java.rmi.RMISecurityManager;
 import java.rmi.server.UnicastRemoteObject;
 
-import datasecurity_rmi.src.PrinterServiceImpl;
 // import datasecurity_rmi.src.RMISSLClientSocketFactory;
 // import datasecurity_rmi.src.RMISSLServerSocketFactory;
 
