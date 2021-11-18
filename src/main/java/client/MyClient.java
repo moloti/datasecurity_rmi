@@ -62,17 +62,15 @@ public class MyClient {
         }
 
         System.out.println("--- Hello Client! Please Sign in! ---");
-        System.out.println("Enter username: (For the purpose of the exerice, use: Thomas)");
+        System.out.println("Enter username:");
         String username = input.nextLine();
-
-        System.out.println("Enter password: (For the purpose of the exerice, use: 1234)");
+        System.out.println("Enter password:");
         String password = input.nextLine();
 
         System.out.println("Authenticating...");
 
         try {
             session = server.authenticate(username, password);
-            System.out.println(session);
             if (session != null) {
                 System.out.println("Login successfull!");
                 logged_in_username = username;
@@ -122,28 +120,88 @@ public class MyClient {
         // lists the print queue for a given printer on the user's display in lines of
         // the form <job number> <file name>
         case 2:
-            queue(input);
+            try {
+                boolean access = server.VerifyRole("queue", logged_in_username);
+                if (access) {
+                    queue(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // moves job to the top of the queue
         case 3:
-            topQueue(input);
+            try {
+                boolean access = server.VerifyRole("topQueue", logged_in_username);
+                if (access) {
+                    topQueue(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // stops the print server, clears the print queue and starts the print server
         // again
         case 4:
-            restart(input);
+            try {
+                boolean access = server.VerifyRole("restart", logged_in_username);
+                if (access) {
+                    restart(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // prints status of printer on the user's display
         case 5:
-            status(input);
+            try {
+                boolean access = server.VerifyRole("status", logged_in_username);
+                if (access) {
+                    status(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // prints the value of the parameter on the user's display
         case 6:
-            readConfig(input);
+            try {
+                boolean access = server.VerifyRole("readConfig", logged_in_username);
+                if (access) {
+                    readConfig(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // sets the printer configuration in parameters
         case 7:
-            setConfig(input);
+            try {
+                boolean access = server.VerifyRole("setConfig", logged_in_username);
+                if (access) {
+                    setConfig(input);
+                } else {
+                    System.out.println("You are not authorized to perform this action");
+                    chooseAction();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             break;
         // cancel the selection
         case 8:
@@ -275,5 +333,4 @@ public class MyClient {
             e.printStackTrace();
         }
     }
-
 }

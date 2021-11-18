@@ -38,7 +38,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
-                "enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol.");
+                "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
         Scanner input = new Scanner(System.in);
         String accessPolicy = input.next();
         // Il they choose ACL, we need to go for the acl file where we have the roles,
@@ -49,7 +49,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             ACL = true;
             File file = new File(outputFilePath + "acl.txt");
             readAccessFile(file);
-            // Otherwise, we need to read the rbac file.
         } else if (accessPolicy.equalsIgnoreCase("RBAC")) {
             System.out.println("Role Based Access Control specified..\nReading RBAC file..");
             ACL = false;
@@ -74,19 +73,16 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                 if (ACL) {
                     String[] parts = line.split(":");
                     String operation = parts[0].trim();
-                    String allowed_users_str = parts[1].trim();
-                    String[] allowed_users_parts = allowed_users_str.split("-");
+                    String[] allowed_users_parts = parts[1].trim().split("-");
                     List<String> allowed_users = new ArrayList<String>();
                     for (int i = 0; i < allowed_users_parts.length; i++) {
                         allowed_users.add(allowed_users_parts[i].trim());
                     }
                     server_roles.put(operation, allowed_users);
-                    System.out.println(server_roles);
                 } else {
                     String[] parts = line.split(":");
                     String role = parts[0].trim();
-                    String allowed_operations_str = parts[1].trim();
-                    String[] allowed_operations_parts = allowed_operations_str.split("-");
+                    String[] allowed_operations_parts = parts[1].trim().split("-");
                     List<String> allowed_operations = new ArrayList<String>();
                     for (int i = 0; i < allowed_operations_parts.length; i++) {
                         allowed_operations.add(allowed_operations_parts[i].trim());
@@ -287,7 +283,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         Encoder encoder = Base64.getUrlEncoder().withoutPadding();
         String token = encoder.encodeToString(aesKey);
         String sessionkey = timestamp + ";" + token;
-        System.out.println(sessionkey);
         return sessionkey;
     }
 
