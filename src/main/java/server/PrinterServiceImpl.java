@@ -39,7 +39,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
-    private static DatabaseConnector database;
 
 
     public PrinterServiceImpl() throws RemoteException {
@@ -81,7 +80,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public void addRoles(String username, List<String> roles_to_add)  throws RemoteException, NotBoundException {
-        database = new DatabaseConnector();
+        DatabaseConnector database = new DatabaseConnector();
         String user_query = "SELECT * FROM users WHERE user_name='" + username + "'";
         ResultSet user_res = database.query(user_query);
         String user_id = null;
@@ -177,7 +176,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             return AccessVerificationACL(logged_in_user, operation);
         } else {
             // return true if access allowed, otherwise it returns false
-            database = new DatabaseConnector();
+            DatabaseConnector database = new DatabaseConnector();
             String query = "SELECT roles.role_name, roles.role_id\n" +
                     "FROM roles\n" +
                     "INNER JOIN user_role ON roles.role_id = user_role.role_id\n" +
@@ -370,6 +369,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     public boolean removeUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
+            DatabaseConnector database = new DatabaseConnector();
             String user_id = userService.getUserId(user);
             for (String role : roles
                  ) {
@@ -384,6 +384,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
+            DatabaseConnector database = new DatabaseConnector();
             String user_query = "SELECT * FROM users WHERE user_name='" + user + "'";
             ResultSet user_res = database.query(user_query);
             String user_id = null;

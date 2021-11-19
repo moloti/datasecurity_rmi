@@ -16,10 +16,9 @@ public class UserService {
     private final HashMap<String, String> userMap = new HashMap<>();
     private final HashMap<String, String[]> userRoles = new HashMap<>();
     private final HashMap<String, String> sessionMap = new HashMap<>();
-    private static DatabaseConnector database;
 
     public UserService() {
-        database = new DatabaseConnector();
+        DatabaseConnector database = new DatabaseConnector();
         database.query("DELETE FROM user_role;\n" +
                 "DELETE FROM transaction_user;\n" +
                 "DELETE FROM users;\n" +
@@ -53,7 +52,7 @@ public class UserService {
     }
 
     private void fillTransactionUsers(String transaction, String[] initial_users) {
-        database = new DatabaseConnector();
+        DatabaseConnector database = new DatabaseConnector();
         String query = "SELECT * FROM transactions where transaction_name='" + transaction + "'";
         ResultSet res = database.query(query);
         String transaction_id = null;
@@ -81,7 +80,7 @@ public class UserService {
     }
 
     private void fillRolesTransaction(String role, String[] initial_transactions) {
-        database = new DatabaseConnector();
+        DatabaseConnector database = new DatabaseConnector();
         String query = "SELECT * FROM roles where role_name='" + role + "'";
         ResultSet res = database.query(query);
         String role_id = null;
@@ -109,6 +108,7 @@ public class UserService {
     }
 
     public String getUserId(String user) {
+        DatabaseConnector database = new DatabaseConnector();
         String user_id = "";
         try {
         String query_t = "SELECT user_id FROM users where user_name='" + user + "'";
@@ -134,7 +134,7 @@ public class UserService {
     }
 
     private void createUser(String username, String password, String[] newRoles) {
-        database = new DatabaseConnector();
+        DatabaseConnector database = new DatabaseConnector();
         // Create the user
         String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
         database.insert(query);

@@ -15,6 +15,7 @@ public class DatabaseConnector {
                     "postgres");
             // étape 3: créer l'objet statement
         } catch (Exception e) {
+            System.out.println("Inside Database Connector");
             System.out.println(e);
         }
     }
@@ -34,6 +35,7 @@ public class DatabaseConnector {
             Statement stmt = conn.createStatement();
             res = stmt.executeQuery(query);
         } catch (Exception e) {
+            System.out.println("Inside Database Query");
             System.out.println(e);
         }
         return res;
