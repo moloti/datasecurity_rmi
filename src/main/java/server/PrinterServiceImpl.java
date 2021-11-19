@@ -1,24 +1,27 @@
 package server;
 
-import java.rmi.NotBoundException;
-import java.rmi.server.UnicastRemoteObject;
-import java.io.FileReader;
-import java.security.SecureRandom;
-import java.sql.Timestamp;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Base64.Encoder;
-import java.util.*;
+import java.util.Scanner;
 
 import javax.naming.AuthenticationException;
-
-import java.rmi.RemoteException;
+import database.DatabaseConnector;
 
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
@@ -38,6 +41,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userService = new UserService();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
+        DatabaseConnector();
         System.out.println(
                 "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
         Scanner input = new Scanner(System.in);
@@ -58,6 +62,10 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         } else {
             System.out.println("Access policy not known, try again.");
         }
+    }
+
+    private char[] DatabaseConnector() {
+        return null;
     }
 
     public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException {
