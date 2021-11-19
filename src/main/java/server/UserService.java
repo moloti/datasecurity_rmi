@@ -19,6 +19,12 @@ public class UserService {
     private static DatabaseConnector database;
 
     public UserService() {
+        database = new DatabaseConnector();
+        database.query("DELETE FROM user_role;\n" +
+                "DELETE FROM transaction_user;\n" +
+                "DELETE FROM users;\n" +
+                "DELETE FROM role_transaction;\n");
+        database.close();
         System.out.println("Creating users...");
         createUser("Alice", "spain", new String[]{"manager"});
         createUser("Bob", "italy", new String[]{"technician"});
