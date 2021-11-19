@@ -352,7 +352,7 @@ public class MyClient {
 
         System.out.println("Please choose an action:");
         System.out.println("-------------------------\n");
-        System.out.println("1 - Fire someone");
+        System.out.println("1 - Fire someone (not coded. To fire a user, remove all of its rights");
         System.out.println("2 - Hire someone");
         System.out.println("3 - Change someone's access");
 
