@@ -444,7 +444,6 @@ public class MyClient {
                         }
                     }
 
-
                     // Now remove from database the roles in roles_to_remove
                     try {
                         System.out.println("Before Remove User Roles");
