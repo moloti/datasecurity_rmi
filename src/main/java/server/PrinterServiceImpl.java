@@ -43,7 +43,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
         userService = new UserService();
-        DatabaseConnector databaseConnector = new DatabaseConnector();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
@@ -67,7 +66,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             System.out.println("Access policy not known, try again.");
         }
     }
-
 
 
     public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException {
@@ -161,20 +159,51 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    public static boolean AccessVerificationRBAC(ArrayList<String> current_user_roles, String operation) {
+    public static boolean AccessVerificationRBAC(List<String> current_user_roles, String transaction_id) {
         // We go through all the current user roles, and check if the server roles allow
         // this operation
+        DatabaseConnector database = new DatabaseConnector();
+        String role_string = "";
         for (int i = 0; i < current_user_roles.size(); i++) {
-            if (server_roles.get(current_user_roles.get(i)).contains(operation)) {
+            role_string += "'" + current_user_roles.get(i) + "'";
+            if (i > 0) {
+                role_string += ",";
+            }
+        }
+        String role_query = "SELECT role_id FROM roles WHERE role_name IN (" + role_string + ")";
+        String role_id_string = "";
+        try {
+            Boolean first = true;
+            ResultSet res = database.query(role_query);
+            while (res.next()) {
+                role_id_string += "'" + res.getString(1) + "'";
+                if (!first) {
+                    role_id_string += ",";
+                }
+                first = false;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String verif_query = "SELECT * FROM role_transaction WHERE transaction_id='" + transaction_id + "' AND role_id IN (" + role_id_string + ")";
+        // If this query is empty, the user doesn't have access
+        try {
+            ResultSet res = database.query(verif_query);
+            database.close();
+            if (!res.next()) {
+                return false;
+            } else {
                 return true;
             }
+        } catch (Exception e) {
+            System.out.println(e);
         }
         return false;
     }
 
-    public static boolean AccessVerificationACL(String logged_in_user, String current_operation) {
+    public static boolean AccessVerificationACL(String logged_in_user, String transaction_id) {
         // We check if the current operation allows this user
-        if (server_roles.get(current_operation).contains(logged_in_user)) {
+        if (server_roles.get(transaction_id).contains(logged_in_user)) {
             return true;
         } else {
             return false;
@@ -182,8 +211,18 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
+        String transaction_id = null;
+        String transaction_query = "SELECT transaction_id FROM transactions WHERE transaction_name='" + operation + "'";
+        try {
+            DatabaseConnector database = new DatabaseConnector();
+            ResultSet res = database.query(transaction_query);
+            res.next();
+            transaction_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         if (ACL) {
-            return AccessVerificationACL(logged_in_user, operation);
+            return AccessVerificationACL(logged_in_user, transaction_id);
         } else {
             // return true if access allowed, otherwise it returns false
             DatabaseConnector database = new DatabaseConnector();
@@ -192,7 +231,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                     "INNER JOIN user_role ON roles.role_id = user_role.role_id\n" +
                     "INNER JOIN users ON user_role.user_id = users.user_id\n" +
                     "WHERE users.user_name = '" + logged_in_user + "'";
-            ArrayList<String> user_roles = new ArrayList<String>();
+            List<String> user_roles = new ArrayList<String>();
             try {
                 ResultSet res = database.query(query);
                 while (res.next()) {
@@ -203,14 +242,15 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                 System.out.println(e);
             }
             database.close();
-            return AccessVerificationRBAC(user_roles, operation);
+            return AccessVerificationRBAC(user_roles, transaction_id);
         }
     }
 
     @Override
     public String authenticate(String username, String password) throws RemoteException {
-        if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
-            if (userService.verifyHash(password, userMap.get(username))) {
+        Map<String, String> user = userService.getUser(username);
+        if ((!user.isEmpty()) || user.containsKey(username)) {
+            if (userService.verifyHash(user.get("password"), user.get(username))) {
                 String sessionKey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
                 userService.addSession(username, sessionKey);
                 return sessionKey;
@@ -374,6 +414,19 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         } else {
             return false;
         }
+
+    }
+
+    @Override
+    public void hireEmployee(String username, String password, List<String> roles) throws RemoteException, AuthenticationException {
+
+            try {
+                String[] roles_cs = roles.toArray(new String[roles.size()]);
+                DatabaseConnector databaseConnector = new DatabaseConnector();
+                userService.createUser(username, password, roles_cs);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
 
     }
 

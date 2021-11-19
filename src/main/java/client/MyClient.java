@@ -202,9 +202,19 @@ public class MyClient {
                     e.printStackTrace();
                 }
                 break;
-            // cancel the selection
+            // Manage employees
             case 8:
-                ManageEmployees(input);
+                try {
+                    boolean access = server.VerifyRole("manageEmployees", logged_in_username);
+                    if (access) {
+                        ManageEmployees(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case 9:
             default:
@@ -342,7 +352,7 @@ public class MyClient {
 
         System.out.println("Please choose an action:");
         System.out.println("-------------------------\n");
-        System.out.println("1 - Fire someone");
+        System.out.println("1 - Fire someone (not coded. To fire a user, remove all of its rights");
         System.out.println("2 - Hire someone");
         System.out.println("3 - Change someone's access");
 
@@ -393,7 +403,13 @@ public class MyClient {
                             break;
                     }
                 }
-                // server.hireEmployee(username, password, roles);
+                try {
+                    server.hireEmployee(username, password, roles);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (AuthenticationException e) {
+                    e.printStackTrace();
+                }
                 break;
             case 3:
                 HashMap<String, String> userMap = null;

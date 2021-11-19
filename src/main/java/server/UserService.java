@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.Map;
 
 import database.DatabaseConnector;
 
@@ -107,6 +108,23 @@ public class UserService {
         database.close();
     }
 
+    public Map<String, String> getUser(String username){
+        DatabaseConnector database = new DatabaseConnector();
+        Map<String, String> usermap = new HashMap<>();
+        try {
+            String query = "SELECT * FROM users WHERE user_name='" + username + "'";
+            ResultSet res_t = database.query(query);
+            res_t.next();
+            usermap.put("user_id", res_t.getString(1));
+            usermap.put("user_name", res_t.getString(2));
+            usermap.put("password", res_t.getString(3));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
+        return usermap;
+    }
+
     public String getUserId(String username) {
         DatabaseConnector database = new DatabaseConnector();
         String user_id = null;
@@ -134,10 +152,10 @@ public class UserService {
         sessionMap.put(user, sessionKey);
     }
 
-    private void createUser(String username, String password, String[] newRoles) {
+    public void createUser(String username, String password, String[] newRoles) {
         DatabaseConnector database = new DatabaseConnector();
         // Create the user
-        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
+        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + hash(password) + "')";
         database.insert(query);
         // Manage the roles
         ResultSet res = database.query("SELECT * FROM users WHERE user_name='" + username + "'");

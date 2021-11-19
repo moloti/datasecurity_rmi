@@ -15,6 +15,7 @@ import javax.naming.AuthenticationException;
 public interface PrinterService extends Remote{
     public String authenticate(String username, String password) throws RemoteException;
     public boolean checkToken(String token) throws RemoteException;
+    public void hireEmployee(String username, String password, List<String> roles) throws RemoteException, AuthenticationException;
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException;
     public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException, NotBoundException;
     public boolean removeUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException, NotBoundException;
