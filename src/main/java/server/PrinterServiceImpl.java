@@ -7,7 +7,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.SecureRandom;
-import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +28,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private HashMap<String, String> userMap = new HashMap<>();
     public UserService userService;
     private String status = "";
-    private static PrinterServiceImpl service;
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
     private static int session_deadline = 60;
@@ -43,7 +41,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
-                "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
+                "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Control...");
         Scanner input = new Scanner(System.in);
         String accessPolicy = input.next();
         // Il they choose ACL, we need to go for the acl file where we have the roles,
@@ -122,7 +120,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    public static boolean AccessVerificiationRBAC(ArrayList<String> current_user_roles, String operation) {
+    public static boolean AccessVerificationRBAC(ArrayList<String> current_user_roles, String operation) {
         // We go through all the current user roles, and check if the server roles allow
         // this operation
         for (int i = 0; i < current_user_roles.size(); i++) {
@@ -133,7 +131,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         return false;
     }
 
-    public static boolean AccessVerificiationACL(String logged_in_user, String current_operation) {
+    public static boolean AccessVerificationACL(String logged_in_user, String current_operation) {
         // We check if the current operation allows this user
         if (server_roles.get(current_operation).contains(logged_in_user)) {
             return true;
@@ -145,10 +143,10 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
         ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getUserRoles()));
         if (ACL) {
-            return AccessVerificiationACL(logged_in_user, operation);
+            return AccessVerificationACL(logged_in_user, operation);
         } else {
             // return true if access allowed, otherwise it returns false
-            return AccessVerificiationRBAC(user_roles, operation);
+            return AccessVerificationRBAC(user_roles, operation);
         }
     }
 
@@ -156,9 +154,9 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public String authenticate(String username, String password) throws RemoteException {
         if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
             if (userService.verifyHash(password, userMap.get(username))) {
-                String sessionkey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
-                userService.addSession(username, sessionkey);
-                return sessionkey;
+                String sessionKey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
+                userService.addSession(username, sessionKey);
+                return sessionKey;
             } else {
                 return null;
             }
@@ -299,8 +297,8 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         ranGen.nextBytes(aesKey);
         Encoder encoder = Base64.getUrlEncoder().withoutPadding();
         String token = encoder.encodeToString(aesKey);
-        String sessionkey = timestamp + ";" + token;
-        return sessionkey;
+        String sessionKey = timestamp + ";" + token;
+        return sessionKey;
     }
 
     @Override

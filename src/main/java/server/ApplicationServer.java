@@ -4,9 +4,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import server.PrinterServiceImpl;
-// import datasecurity_rmi.src.RMISSLClientSocketFactory;
-// import datasecurity_rmi.src.RMISSLServerSocketFactory;
 
 public class ApplicationServer extends UnicastRemoteObject {
 
@@ -15,7 +12,6 @@ public class ApplicationServer extends UnicastRemoteObject {
     }
 
     public static void main(String[] args) {
-
         try {
             // Create SSL-based registry
             Registry registry = LocateRegistry.createRegistry(

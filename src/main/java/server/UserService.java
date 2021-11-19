@@ -30,6 +30,40 @@ public class UserService {
         createUser("Henry", "sweden", new String[]{"user"});
         createUser("Ida", "norway", new String[]{"powerUser"});
         System.out.println("User Creation Finished");
+
+        fillRolesTransaction("manager", new String[]{"print", "queue", "topQueue", "start", "stop", "restart", "status", "readConfig", "setConfig"});
+        fillRolesTransaction("powerUser", new String[]{"print", "queue", "topQueue", "restart"});
+        fillRolesTransaction("user", new String[]{"print", "queue"});
+        fillRolesTransaction("technician", new String[]{"start", "stop", "restart", "status", "readConfig", "setConfig"});
+
+    }
+
+    private void fillRolesTransaction(String role, String[] initial_transactions) {
+        database = new DatabaseConnector();
+        String query = "SELECT * FROM roles where role_name='" + role + "'";
+        ResultSet res = database.query(query);
+        String role_id = null;
+        try {
+            res.next();
+            role_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String transaction_id = null;
+        try {
+            for (int i = 0; i < initial_transactions.length; i++) {
+                String query_t = "SELECT * FROM transactions where transaction_name='" + initial_transactions[i] + "'";
+                ResultSet res_t = database.query(query_t);
+                res_t.next();
+                transaction_id = res_t.getString(1);
+
+                String insert_query = "INSERT INTO role_transaction (role_id,transaction_id) VALUES('" + role_id + "','" + transaction_id + "')";
+                database.insert(insert_query);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
     }
 
     public HashMap<String, String> getUserMap() {
