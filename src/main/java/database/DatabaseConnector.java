@@ -1,46 +1,41 @@
 package database;
 
-
 import java.sql.*;
 
 public class DatabaseConnector {
-    private final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private final String user = "postgres";
-    private final String password = "postgres";
+    public Connection conn;
 
-    /**
-     * Connect to the PostgreSQL database
-     *
-     * @return a Connection object
-     */
-    public Connection connect() {
-        Connection conn = null;
+    public DatabaseConnector() {
         try {
-            conn = DriverManager.getConnection(url, user, password);
-            System.out.println("Connected to the PostgreSQL server successfully.");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+            // étape 1: charger la classe de driver
+            Class.forName("org.postgresql.Driver");
 
-        return conn;
+            // étape 2: créer l'objet de connexion
+            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5438/postgres", "postgres",
+                    "postgres");
+            // étape 3: créer l'objet statement
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
-    public void getUsers(){
-        String SQL = "SELECT * FROM users";
+    public ResultSet query(String query) {
+        ResultSet res = null;
+        try {
+            Statement stmt = conn.createStatement();
+            res = stmt.executeQuery(query);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return res;
+    }
 
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+    public void close() {
+        try {
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }
-
-
 

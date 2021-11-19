@@ -1,35 +1,42 @@
 package server;
 
-import java.rmi.server.UnicastRemoteObject;
-import java.io.FileReader;
-import java.security.SecureRandom;
-import java.sql.Timestamp;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.security.SecureRandom;
+import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Base64.Encoder;
-import java.util.*;
+import java.util.Scanner;
 
 import javax.naming.AuthenticationException;
 
-import java.rmi.RemoteException;
+import database.DatabaseConnector;
 
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
-    private HashMap<String, String> userMap;
-    private UserService userService;
+    private HashMap<String, String> userMap = new HashMap<>();
+    public UserService userService;
     private String status = "";
     private static PrinterServiceImpl service;
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
     private static int session_deadline = 60;
-    private static HashMap<String, List<String>> server_roles;
+    public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
+    private DatabaseConnector database = new DatabaseConnector();
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
 
     public PrinterServiceImpl() throws RemoteException {
@@ -38,7 +45,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
-                "enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol.");
+                "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
         Scanner input = new Scanner(System.in);
         String accessPolicy = input.next();
         // Il they choose ACL, we need to go for the acl file where we have the roles,
@@ -49,7 +56,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             ACL = true;
             File file = new File(outputFilePath + "acl.txt");
             readAccessFile(file);
-            // Otherwise, we need to read the rbac file.
         } else if (accessPolicy.equalsIgnoreCase("RBAC")) {
             System.out.println("Role Based Access Control specified..\nReading RBAC file..");
             ACL = false;
@@ -60,9 +66,20 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
+    private char[] DatabaseConnector() {
+        return null;
+    }
+
+    public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException {
+        return userService.getUserMap();
+    }
+
+    public String[] getUserRoles(String username) throws RemoteException, NotBoundException {
+        return userService.getSpecifiedUserRoles(username);
+    }
+
     private void readAccessFile(File file) {
         BufferedReader br = null;
-        HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
         try {
 
             // create BufferedReader object from the File
@@ -75,8 +92,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                 if (ACL) {
                     String[] parts = line.split(":");
                     String operation = parts[0].trim();
-                    String allowed_users_str = parts[1].trim();
-                    String[] allowed_users_parts = allowed_users_str.split("-");
+                    String[] allowed_users_parts = parts[1].trim().split("-");
                     List<String> allowed_users = new ArrayList<String>();
                     for (int i = 0; i < allowed_users_parts.length; i++) {
                         allowed_users.add(allowed_users_parts[i].trim());
@@ -85,15 +101,13 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
                 } else {
                     String[] parts = line.split(":");
                     String role = parts[0].trim();
-                    String allowed_operations_str = parts[1].trim();
-                    String[] allowed_operations_parts = allowed_operations_str.split("-");
+                    String[] allowed_operations_parts = parts[1].trim().split("-");
                     List<String> allowed_operations = new ArrayList<String>();
                     for (int i = 0; i < allowed_operations_parts.length; i++) {
                         allowed_operations.add(allowed_operations_parts[i].trim());
                     }
                     server_roles.put(role, allowed_operations);
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,22 +124,30 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    private static boolean AccessVerificiationRBAC(String[] current_user_roles, String operation) {
+    public static boolean AccessVerificiationRBAC(ArrayList<String> current_user_roles, String operation) {
         // We go through all the current user roles, and check if the server roles allow
         // this operation
-        for (int i = 0; i < current_user_roles.length; i++) {
-            if (server_roles.get(current_user_roles[i]).contains(operation)) {
+        for (int i = 0; i < current_user_roles.size(); i++) {
+            if (server_roles.get(current_user_roles.get(i)).contains(operation)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
-        String[] user_roles = userService.getRoles();
-        if (ACL) {
-            System.out.println("acl");
+    public static boolean AccessVerificiationACL(String logged_in_user, String current_operation) {
+        // We check if the current operation allows this user
+        if (server_roles.get(current_operation).contains(logged_in_user)) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
+        ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getUserRoles()));
+        if (ACL) {
+            return AccessVerificiationACL(logged_in_user, operation);
         } else {
             // return true if access allowed, otherwise it returns false
             return AccessVerificiationRBAC(user_roles, operation);
@@ -137,7 +159,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
             if (userService.verifyHash(password, userMap.get(username))) {
                 String sessionkey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
-                userService.addSession(sessionkey, username);
+                userService.addSession(username, sessionkey);
                 return sessionkey;
             } else {
                 return null;
@@ -280,7 +302,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         Encoder encoder = Base64.getUrlEncoder().withoutPadding();
         String token = encoder.encodeToString(aesKey);
         String sessionkey = timestamp + ";" + token;
-        System.out.println(sessionkey);
         return sessionkey;
     }
 
