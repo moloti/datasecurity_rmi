@@ -55,6 +55,7 @@ public class UserService {
     }
 
     public String getUserId(){
+        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
         database.query(query);
         database.close();
     }
