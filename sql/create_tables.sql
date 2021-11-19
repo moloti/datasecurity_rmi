@@ -1,15 +1,10 @@
+CREATE SCHEMA IF NOT EXISTS rightsmanagement;
 CREATE TABLE IF NOT EXISTS users
 (
-    user_id
-    varchar
-(
-    250
-) NOT NULL,
+    user_id uuid DEFAULT gen_random_uuid (),
+    user_name VARCHAR(255) NOT NULL,
     password
-    varchar
-(
-    250
-) NOT NULL,
+    VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     user_id
@@ -18,25 +13,29 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS transactions
 (
-    transaction_id INT NOT NULL,
-    transaction_name varchar
-(
-    250
-) NOT NULL,
+    transaction_id uuid DEFAULT gen_random_uuid (),
+    transaction_name VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     transaction_id
 )
 );
 
+CREATE TABLE IF NOT EXISTS roles
+(
+    role_id uuid DEFAULT gen_random_uuid (),
+    role_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY
+(
+    role_id
+)
+    );
+
 CREATE TABLE IF NOT EXISTS user_role
 (
-    user_role_id INT NOT NULL,
-    role_id INT NOT NULL,
-    user_id varchar
-(
-    250
-) NOT NULL,
+    user_role_id uuid DEFAULT gen_random_uuid (),
+    role_id VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     user_role_id
@@ -51,9 +50,9 @@ CREATE TABLE IF NOT EXISTS user_role
 
 CREATE TABLE IF NOT EXISTS role_transaction
 (
-    role_action_id INT NOT NULL,
-    role_id INT NOT NULL,
-    transaction_id INT NOT NULL,
+    role_action_id uuid DEFAULT gen_random_uuid (),
+    role_id VARCHAR(255) NOT NULL,
+    transaction_id VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     role_transaction_id
@@ -65,34 +64,11 @@ CREATE TABLE IF NOT EXISTS role_transaction
     FOREIGN KEY(transaction_id)
     REFERENCES transactions(transaction_id),
 );
-
-CREATE TABLE IF NOT EXISTS role_transaction
-(
-    role_action_id INT NOT NULL,
-    role_id INT NOT NULL,
-    transaction_id INT NOT NULL,
-    PRIMARY KEY
-(
-    role_transaction_id
-)
-    CONSTRAINT fk_role
-    FOREIGN KEY(role_id)
-    REFERENCES roles(role_id),
-    CONSTRAINT fk_transaction
-    FOREIGN KEY(transaction_id)
-    REFERENCES transactions(transaction_id),
-);
-
-
 
 
 CREATE TABLE IF NOT EXISTS acl (
-    acl_id INT NOT NULL,
-    user_id
-    varchar
-(
-    250
-) NOT NULL,
+    acl_id uuid DEFAULT gen_random_uuid (),
+    user_id VARCHAR(255) NOT NULL,
     print BOOLEAN NOT NULL,
     queue BOOLEAN NOT NULL,
     topQueue BOOLEAN NOT NULL,
@@ -106,8 +82,4 @@ CREATE TABLE IF NOT EXISTS acl (
     CONSTRAINT fk_user
     FOREIGN KEY(user_id)
     REFERENCES users(user_id),
-);
-
-CREATE TABLE IF NOT EXISTS rbac (
-
 );
