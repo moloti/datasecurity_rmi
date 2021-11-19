@@ -9,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.SecureRandom;
+import java.security.spec.ECField;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -79,11 +80,37 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         return userService.getSpecifiedUserRoles(username);
     }
 
+    public List<String> getUserPermission(String username) throws RemoteException, NotBoundException {
+        database = new DatabaseConnector();
+        String query = "SELECT transaction_name FROM transactions INNER JOIN transaction_user ON transactions.transaction_id = transaction_user.transaction_id INNER JOIN users ON transaction_user.user_id = users.user_id WHERE users.user_name ='" + username + "'";
+        List<String> permissions = new ArrayList<String>();
+        try {
+            ResultSet res = database.query(query);
+            while (res.next()) {
+                permissions.add(res.getString(1));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
+        return permissions;
+    }
+
     public void removeRoles(String username, List<String> roles_to_remove) throws RemoteException, NotBoundException {
         database = new DatabaseConnector();
         String user_id = userService.getUserId(username);
         for (int i = 0; i < roles_to_remove.size(); i++) {
             String query = "DELETE FROM user_role WHERE user_id ='" + user_id + "' AND role_id = (SELECT role_id FROM roles WHERE role_name='" + roles_to_remove.get(i) + "')";
+            database.delete(query);
+        }
+        database.close();
+    }
+
+    public void removePermission(String username, List<String> permissions_to_remove) throws RemoteException, NotBoundException {
+        database = new DatabaseConnector();
+        String user_id = userService.getUserId(username);
+        for (int i = 0; i < permissions_to_remove.size(); i++) {
+            String query = "DELETE FROM transaction_user WHERE user_id ='" + user_id + "' AND transaction_id = (SELECT transaction_id FROM transactions WHERE transaction_name='" + permissions_to_remove.get(i) + "')";
             database.delete(query);
         }
         database.close();
@@ -246,6 +273,10 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             database.close();
             return AccessVerificationRBAC(user_roles, transaction_id);
         }
+    }
+
+    public boolean ACLorRBAC() throws RemoteException {
+        return ACL;
     }
 
     @Override

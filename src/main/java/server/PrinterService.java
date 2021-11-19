@@ -15,7 +15,10 @@ public interface PrinterService extends Remote{
     public boolean checkToken(String token) throws RemoteException;
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException;
     public void addRoles(String username, List<String> roles_to_add) throws RemoteException, NotBoundException ;
+    public List<String> getUserPermission(String username) throws RemoteException, NotBoundException;
     public void removeRoles(String username, List<String> roles_to_remove) throws RemoteException, NotBoundException ;
+    public void removePermission(String username, List<String> permissions_to_remove) throws RemoteException, NotBoundException;
+    public boolean ACLorRBAC()throws RemoteException;
     public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException;
     public String[] getUserRoles(String username) throws RemoteException, NotBoundException;
     public boolean print(String token, String filename, String printer) throws RemoteException, AuthenticationException;   // prints file filename on the specified printer

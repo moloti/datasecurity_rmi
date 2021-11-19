@@ -204,17 +204,7 @@ public class MyClient {
                 break;
             // Manage employees
             case 8:
-                try {
-                    boolean access = server.VerifyRole("manageEmployees", logged_in_username);
-                    if (access) {
-                        ManageEmployees(input);
-                    } else {
-                        System.out.println("You are not authorized to perform this action");
-                        chooseAction();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                ManageEmployees(input);
                 break;
             case 9:
             default:
@@ -406,87 +396,153 @@ public class MyClient {
                 // server.hireEmployee(username, password, roles);
                 break;
             case 3:
-                HashMap<String, String> userMap = null;
-                HashMap<String, String> userRoles = null;
+                Boolean isACL = false;
                 try {
-                    int user_selection;
-                    Scanner user_input = new Scanner(System.in);
-                    userMap = server.getUserMap();
-                    System.out.println("Please choose the concerned employee");
-                    System.out.println("-------------------------\n");
-                    List keyList = List.copyOf(userMap.keySet());
-                    for (int i = 0; i < keyList.size(); i++) {
-                        System.out.println(i + " - " + keyList.get(i));
-                    }
-                    user_selection = Integer.parseInt(user_input.nextLine());
-                    List<String> role_of_chosen_user = null;
-                    String chosen_user = null;
+                    isACL = server.ACLorRBAC();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                System.out.println(isACL);
+
+                if (isACL) {
+                    //ACL
+                    HashMap<String, String> userMap = null;
+                    HashMap<String, String> userRoles = null;
                     try {
-                        chosen_user = keyList.get(user_selection).toString();
-                        role_of_chosen_user = new ArrayList<>(Arrays.asList(server.getUserRoles(chosen_user)));
+                        int user_selection;
+                        Scanner user_input = new Scanner(System.in);
+                        userMap = server.getUserMap();
+                        System.out.println("Please choose the concerned employee");
+                        System.out.println("-------------------------\n");
+                        List keyList = List.copyOf(userMap.keySet());
+                        for (int i = 0; i < keyList.size(); i++) {
+                            System.out.println(i + " - " + keyList.get(i));
+                        }
+                        user_selection = Integer.parseInt(user_input.nextLine());
+                        List<String> permission_of_chosen_user = null;
+                        String chosen_user = null;
+                        try {
+                            chosen_user = keyList.get(user_selection).toString();
+                            permission_of_chosen_user = new ArrayList<String>(server.getUserPermission(chosen_user));
+                        } catch (RemoteException | NotBoundException e) {
+                            System.out.println("Error");
+                            e.printStackTrace();
+                        }
+
+                        // Remove permission
+                        int permission_remove_selection;
+                        Scanner permission_input_remove = new Scanner(System.in);
+
+                        System.out.println("Please select permissions to remove:");
+                        boolean not_finished_remove = true;
+                        List<String> permissions_to_remove = new ArrayList<String>();
+                        List<String> PERMISSIONS_REMOVE = permission_of_chosen_user;
+                        while (not_finished_remove) {
+                            for (int i = 0; i < PERMISSIONS_REMOVE.size(); i++) {
+                                System.out.println(i + " - " + PERMISSIONS_REMOVE.get(i));
+
+                            }
+                            System.out.println(PERMISSIONS_REMOVE.size() + " - I am done");
+                            permission_remove_selection = Integer.parseInt(permission_input_remove.nextLine());
+                            if (permission_remove_selection == PERMISSIONS_REMOVE.size()) {
+                                not_finished_remove = false;
+                            } else {
+                                permissions_to_remove.add(PERMISSIONS_REMOVE.get(permission_remove_selection));
+                                PERMISSIONS_REMOVE.remove(permission_of_chosen_user.get(permission_remove_selection));
+
+                            }
+                        }
+                        // Now remove from database the roles in roles_to_remove
+                        System.out.println(PERMISSIONS_REMOVE);
+                        server.removePermission(chosen_user, PERMISSIONS_REMOVE);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                } else {
+                    //RBAC
+
+                    HashMap<String, String> userMap = null;
+                    HashMap<String, String> userRoles = null;
+                    try {
+                        int user_selection;
+                        Scanner user_input = new Scanner(System.in);
+                        userMap = server.getUserMap();
+                        System.out.println("Please choose the concerned employee");
+                        System.out.println("-------------------------\n");
+                        List keyList = List.copyOf(userMap.keySet());
+                        for (int i = 0; i < keyList.size(); i++) {
+                            System.out.println(i + " - " + keyList.get(i));
+                        }
+                        user_selection = Integer.parseInt(user_input.nextLine());
+                        List<String> role_of_chosen_user = null;
+                        String chosen_user = null;
+                        try {
+                            chosen_user = keyList.get(user_selection).toString();
+                            role_of_chosen_user = new ArrayList<>(Arrays.asList(server.getUserRoles(chosen_user)));
+                        } catch (RemoteException | NotBoundException e) {
+                            System.out.println("Error");
+                            e.printStackTrace();
+                        }
+
+                        // REMOVE ROLES
+                        int role_remove_selection;
+                        Scanner role_input_remove = new Scanner(System.in);
+
+                        System.out.println("Please select roles to remove:");
+                        boolean not_finished_remove = true;
+                        List<String> roles_to_remove = new ArrayList<String>();
+                        List<String> ROLES_REMOVE = role_of_chosen_user;
+                        while (not_finished_remove) {
+                            for (int i = 0; i < ROLES_REMOVE.size(); i++) {
+                                System.out.println(i + " - " + ROLES_REMOVE.get(i));
+
+                            }
+                            System.out.println(ROLES_REMOVE.size() + " - I am done");
+                            role_remove_selection = Integer.parseInt(role_input_remove.nextLine());
+                            if (role_remove_selection == ROLES_REMOVE.size()) {
+                                not_finished_remove = false;
+                            } else {
+                                roles_to_remove.add(ROLES_REMOVE.get(role_remove_selection));
+                                ROLES_REMOVE.remove(role_of_chosen_user.get(role_remove_selection));
+
+                            }
+                        }
+                        server.removeRoles(chosen_user, roles_to_remove);
+                        // Now remove from database the roles in roles_to_remove
+
+                        // ADD ROLES
+                        int role_add_selection;
+                        Scanner role_input_add = new Scanner(System.in);
+                        String[] real_roles = {"manager", "technician", "powerUser", "user"};
+                        List<String> list_real_roles = new ArrayList<String>(Arrays.asList(real_roles));
+                        for (int k = 0; k < role_of_chosen_user.size(); k++) {
+                            list_real_roles.remove(role_of_chosen_user.get(k));
+                        }
+                        System.out.println("Please select a role to add:");
+                        boolean not_finished_add = true;
+                        List<String> roles_to_add = new ArrayList<String>();
+                        List<String> ROLES_ADD = list_real_roles;
+                        while (not_finished_add) {
+                            for (int i = 0; i < ROLES_ADD.size(); i++) {
+                                System.out.println(i + " - " + ROLES_ADD.get(i));
+
+                            }
+                            System.out.println(ROLES_ADD.size() + " - I am done");
+                            role_add_selection = Integer.parseInt(role_input_add.nextLine());
+                            if (role_add_selection == ROLES_ADD.size()) {
+                                not_finished_add = false;
+                            } else {
+                                roles_to_add.add(ROLES_ADD.get(role_add_selection));
+                                ROLES_ADD.remove(list_real_roles.get(role_add_selection));
+                            }
+                        }
+                        server.addRoles(chosen_user, roles_to_add);
+                        // Now add from database the roles in roles_to_ad
+
                     } catch (RemoteException | NotBoundException e) {
                         System.out.println("Error");
                         e.printStackTrace();
                     }
-
-                    // REMOVE ROLES
-                    int role_remove_selection;
-                    Scanner role_input_remove = new Scanner(System.in);
-
-                    System.out.println("Please select roles to remove:");
-                    boolean not_finished_remove = true;
-                    List<String> roles_to_remove = new ArrayList<String>();
-                    List<String> ROLES_REMOVE = role_of_chosen_user;
-                    while (not_finished_remove) {
-                        for (int i = 0; i < ROLES_REMOVE.size(); i++) {
-                            System.out.println(i + " - " + ROLES_REMOVE.get(i));
-
-                        }
-                        System.out.println(ROLES_REMOVE.size() + " - I am done");
-                        role_remove_selection = Integer.parseInt(role_input_remove.nextLine());
-                        if (role_remove_selection == ROLES_REMOVE.size()) {
-                            not_finished_remove = false;
-                        } else {
-                            roles_to_remove.add(ROLES_REMOVE.get(role_remove_selection));
-                            ROLES_REMOVE.remove(role_of_chosen_user.get(role_remove_selection));
-
-                        }
-                    }
-                    server.removeRoles(chosen_user, roles_to_remove);
-                    // Now remove from database the roles in roles_to_remove
-
-                    // ADD ROLES
-                    int role_add_selection;
-                    Scanner role_input_add = new Scanner(System.in);
-                    String[] real_roles = {"manager", "technician", "powerUser", "user"};
-                    List<String> list_real_roles = new ArrayList<String>(Arrays.asList(real_roles));
-                    for (int k = 0; k < role_of_chosen_user.size(); k++) {
-                        list_real_roles.remove(role_of_chosen_user.get(k));
-                    }
-                    System.out.println("Please select a role to add:");
-                    boolean not_finished_add = true;
-                    List<String> roles_to_add = new ArrayList<String>();
-                    List<String> ROLES_ADD = list_real_roles;
-                    while (not_finished_add) {
-                        for (int i = 0; i < ROLES_ADD.size(); i++) {
-                            System.out.println(i + " - " + ROLES_ADD.get(i));
-
-                        }
-                        System.out.println(ROLES_ADD.size() + " - I am done");
-                        role_add_selection = Integer.parseInt(role_input_add.nextLine());
-                        if (role_add_selection == ROLES_ADD.size()) {
-                            not_finished_add = false;
-                        } else {
-                            roles_to_add.add(ROLES_ADD.get(role_add_selection));
-                            ROLES_ADD.remove(list_real_roles.get(role_add_selection));
-                        }
-                    }
-                    server.addRoles(chosen_user, roles_to_add);
-                    // Now add from database the roles in roles_to_ad
-
-                } catch (RemoteException | NotBoundException e) {
-                    System.out.println("Error");
-                    e.printStackTrace();
                 }
             default:
                 break;
