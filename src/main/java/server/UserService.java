@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.HashMap;
 
 import database.DatabaseConnector;
@@ -47,6 +48,23 @@ public class UserService {
         database = new DatabaseConnector();
         String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
         database.query(query);
+        ResultSet res = database.query("SELECT * FROM users WHERE user_name=" + username);
+        String user_id = null;
+        try {
+            System.out.println(res.getString(1));
+            user_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String role_id = null;
+        ResultSet res = database.query("SELECT * FROM roles WHERE role_name=" + "username");
+        try {
+            System.out.println(res.getString(1));
+            role_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String role_query = "INSERT INTO roles (role_id, user_id) VALUES ('"+role_id+"',"+user_id+"')";
         database.close();
         userRoles.put(username, newRoles);
         userMap.put(username, hash(password));

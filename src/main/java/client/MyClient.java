@@ -441,7 +441,8 @@ public class MyClient {
 
                     }
                 }
-
+                chosen_user username
+                roles_to_remove [technician, user]
                 // Now remove from database the roles in roles_to_remove
 
                 // ADD ROLES
@@ -470,7 +471,8 @@ public class MyClient {
                         ROLES_ADD.remove(list_real_roles.get(role_add_selection));
                     }
                 }
-
+                chosen_user username
+                roles_to_add [powerUser]
                 // Now add from database the roles in roles_to_ad
 
             } catch (RemoteException | NotBoundException e) {
