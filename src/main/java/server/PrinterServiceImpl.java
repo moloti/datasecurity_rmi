@@ -1,8 +1,11 @@
 package server;
 
+import database.DatabaseConnector;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,7 +30,8 @@ import javax.naming.AuthenticationException;
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
     private HashMap<String, String> userMap = new HashMap<>();
-    public UserService userService;
+    private static UserService userService;
+    private static DatabaseConnector databaseConnector;
     private String status = "";
     private static PrinterServiceImpl service;
     private Map<String, LinkedList> printerMap = new HashMap<>();
@@ -40,6 +44,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
         userService = new UserService();
+        databaseConnector = new DatabaseConnector();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
@@ -64,9 +69,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
     }
 
-    private char[] DatabaseConnector() {
-        return null;
-    }
+
 
     public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException {
         return userService.getUserMap();
@@ -322,5 +325,31 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         }
 
     }
+
+    public boolean removeUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+            String user_id = userService.getUserId(user);
+            for (String role : roles
+                 ) {
+                String query = "DELETE FROM users (user_name,password) WHERE user_id = %s".formatted(user_id, role);
+            }
+            String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
+            database.query(query);
+            database.close();
+            userRoles.put(username, newRoles);
+            userMap.put(username, hash(password));
+            writeFile();
+        } else
+            throw new AuthenticationException();
+
+    }
+
+    public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
+        if (checkToken(token)) {
+
+        } else
+            throw new AuthenticationException();
+    }
+
 
 }

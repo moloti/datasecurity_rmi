@@ -1,10 +1,12 @@
 package server;
 
+import java.lang.reflect.Array;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.naming.AuthenticationException;
 
@@ -13,7 +15,8 @@ public interface PrinterService extends Remote{
     public String authenticate(String username, String password) throws RemoteException;
     public boolean checkToken(String token) throws RemoteException;
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException;
-
+    public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException;
+    public boolean removeUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException;
     public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException;
     public String[] getUserRoles(String username) throws RemoteException, NotBoundException;
     public boolean print(String token, String filename, String printer) throws RemoteException, AuthenticationException;   // prints file filename on the specified printer

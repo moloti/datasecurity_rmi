@@ -18,6 +18,7 @@ public class UserService {
     private static DatabaseConnector database;
 
     public UserService() {
+        database = new DatabaseConnector();
         System.out.println("Creating users...");
         createUser("Alice", "spain", new String[]{"manager"});
         createUser("Bob", "italy", new String[]{"technician"});
@@ -35,6 +36,7 @@ public class UserService {
         return userMap;
     }
 
+
     public HashMap<String, String> getSessionMap() {
         return sessionMap;
     }
@@ -44,13 +46,17 @@ public class UserService {
     }
 
     private void createUser(String username, String password, String[] newRoles) {
-        database = new DatabaseConnector();
         String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
         database.query(query);
         database.close();
         userRoles.put(username, newRoles);
         userMap.put(username, hash(password));
         writeFile();
+    }
+
+    public String getUserId(){
+        database.query(query);
+        database.close();
     }
 
     public String[] getUserRoles() {
