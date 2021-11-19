@@ -410,8 +410,9 @@ public class MyClient {
                     }
                     user_selection = Integer.parseInt(user_input.nextLine());
                     List<String> role_of_chosen_user = null;
+                    String chosen_user = null;
                     try {
-                        String chosen_user = keyList.get(user_selection).toString();
+                        chosen_user = keyList.get(user_selection).toString();
                         role_of_chosen_user = new ArrayList<>(Arrays.asList(server.getUserRoles(chosen_user)));
                     } catch (RemoteException | NotBoundException e) {
                         System.out.println("Error");
@@ -469,6 +470,7 @@ public class MyClient {
                             ROLES_ADD.remove(list_real_roles.get(role_add_selection));
                         }
                     }
+                    server.addRoles(chosen_user, roles_to_add);
                     // Now add from database the roles in roles_to_ad
 
                 } catch (RemoteException | NotBoundException e) {
