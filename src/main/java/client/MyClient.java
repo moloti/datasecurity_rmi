@@ -102,113 +102,113 @@ public class MyClient {
         selection = Integer.parseInt(input.nextLine());
 
         switch (selection) {
-        // prints file filename on the specified printer
-        case 1:
-            try {
-                boolean access = server.VerifyRole("print", logged_in_username);
-                if (access) {
-                    print(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+            // prints file filename on the specified printer
+            case 1:
+                try {
+                    boolean access = server.VerifyRole("print", logged_in_username);
+                    if (access) {
+                        print(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // lists the print queue for a given printer on the user's display in lines of
-        // the form <job number> <file name>
-        case 2:
-            try {
-                boolean access = server.VerifyRole("queue", logged_in_username);
-                if (access) {
-                    queue(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // lists the print queue for a given printer on the user's display in lines of
+            // the form <job number> <file name>
+            case 2:
+                try {
+                    boolean access = server.VerifyRole("queue", logged_in_username);
+                    if (access) {
+                        queue(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // moves job to the top of the queue
-        case 3:
-            try {
-                boolean access = server.VerifyRole("topQueue", logged_in_username);
-                if (access) {
-                    topQueue(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // moves job to the top of the queue
+            case 3:
+                try {
+                    boolean access = server.VerifyRole("topQueue", logged_in_username);
+                    if (access) {
+                        topQueue(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // stops the print server, clears the print queue and starts the print server
-        // again
-        case 4:
-            try {
-                boolean access = server.VerifyRole("restart", logged_in_username);
-                if (access) {
-                    restart(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // stops the print server, clears the print queue and starts the print server
+            // again
+            case 4:
+                try {
+                    boolean access = server.VerifyRole("restart", logged_in_username);
+                    if (access) {
+                        restart(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // prints status of printer on the user's display
-        case 5:
-            try {
-                boolean access = server.VerifyRole("status", logged_in_username);
-                if (access) {
-                    status(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // prints status of printer on the user's display
+            case 5:
+                try {
+                    boolean access = server.VerifyRole("status", logged_in_username);
+                    if (access) {
+                        status(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // prints the value of the parameter on the user's display
-        case 6:
-            try {
-                boolean access = server.VerifyRole("readConfig", logged_in_username);
-                if (access) {
-                    readConfig(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // prints the value of the parameter on the user's display
+            case 6:
+                try {
+                    boolean access = server.VerifyRole("readConfig", logged_in_username);
+                    if (access) {
+                        readConfig(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // sets the printer configuration in parameters
-        case 7:
-            try {
-                boolean access = server.VerifyRole("setConfig", logged_in_username);
-                if (access) {
-                    setConfig(input);
-                } else {
-                    System.out.println("You are not authorized to perform this action");
-                    chooseAction();
+                break;
+            // sets the printer configuration in parameters
+            case 7:
+                try {
+                    boolean access = server.VerifyRole("setConfig", logged_in_username);
+                    if (access) {
+                        setConfig(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            break;
-        // cancel the selection
-        case 8:
-            break;
-        case 9:
-            ManageEmployees(input);
-        default:
-            break;
+                break;
+            // cancel the selection
+            case 8:
+                break;
+            case 9:
+                ManageEmployees(input);
+            default:
+                break;
         }
 
         return false;
@@ -349,138 +349,134 @@ public class MyClient {
         selection = Integer.parseInt(input_management.nextLine());
 
         switch (selection) {
-        // Fire someone
-        case 1:
-            // delete user
-            // case of all users
-            // server.delete(user)
-            break;
-        case 2:
-            // Hire someone
-            Scanner hire_input = new Scanner(System.in);
-            System.out.println("Enter username of new employee:");
-            String username = hire_input.nextLine();
-            System.out.println("Enter password of new employee:");
-            String password = hire_input.nextLine();
-            System.out.println("Choose the roles of the new employee:");
-            boolean quit_selection = true;
-            List<String> roles = new ArrayList<String>();
-            while (quit_selection) {
-                Scanner role_input = new Scanner(System.in);
-                System.out.println("1 - manager");
-                System.out.println("2 - technician");
-                System.out.println("3 - powerUser");
-                System.out.println("4 - user");
-                System.out.println("5 - No more roles");
-                int role_selection = Integer.parseInt(role_input.nextLine());
-                switch (role_selection) {
-                case 1:
-                    roles.add("manager");
-                    break;
-                case 2:
-                    roles.add("technician");
-                    break;
-                case 3:
-                    roles.add("powerUser");
-                    break;
-                case 4:
-                    roles.add("user");
-                    break;
-                case 5:
-                    quit_selection = false;
-                    break;
-                default:
-                    break;
+            // Fire someone
+            case 1:
+                // delete user
+                // case of all users
+                // server.delete(user)
+                break;
+            case 2:
+                // Hire someone
+                Scanner hire_input = new Scanner(System.in);
+                System.out.println("Enter username of new employee:");
+                String username = hire_input.nextLine();
+                System.out.println("Enter password of new employee:");
+                String password = hire_input.nextLine();
+                System.out.println("Choose the roles of the new employee:");
+                boolean quit_selection = true;
+                List<String> roles = new ArrayList<String>();
+                while (quit_selection) {
+                    Scanner role_input = new Scanner(System.in);
+                    System.out.println("1 - manager");
+                    System.out.println("2 - technician");
+                    System.out.println("3 - powerUser");
+                    System.out.println("4 - user");
+                    System.out.println("5 - No more roles");
+                    int role_selection = Integer.parseInt(role_input.nextLine());
+                    switch (role_selection) {
+                        case 1:
+                            roles.add("manager");
+                            break;
+                        case 2:
+                            roles.add("technician");
+                            break;
+                        case 3:
+                            roles.add("powerUser");
+                            break;
+                        case 4:
+                            roles.add("user");
+                            break;
+                        case 5:
+                            quit_selection = false;
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
-            // server.hireEmployee(username, password, roles);
-            break;
-        case 3:
-            HashMap<String, String> userMap = null;
-            HashMap<String, String> userRoles = null;
-            try {
-                int user_selection;
-                Scanner user_input = new Scanner(System.in);
-                userMap = server.getUserMap();
-                System.out.println("Please choose the concerned employee");
-                System.out.println("-------------------------\n");
-                List keyList = List.copyOf(userMap.keySet());
-                for (int i = 0; i < keyList.size(); i++) {
-                    System.out.println(i + " - " + keyList.get(i));
-                }
-                user_selection = Integer.parseInt(user_input.nextLine());
-                List<String> role_of_chosen_user = null;
+                // server.hireEmployee(username, password, roles);
+                break;
+            case 3:
+                HashMap<String, String> userMap = null;
+                HashMap<String, String> userRoles = null;
                 try {
-                    String chosen_user = keyList.get(user_selection).toString();
-                    role_of_chosen_user = new ArrayList<>(Arrays.asList(server.getUserRoles(chosen_user)));
+                    int user_selection;
+                    Scanner user_input = new Scanner(System.in);
+                    userMap = server.getUserMap();
+                    System.out.println("Please choose the concerned employee");
+                    System.out.println("-------------------------\n");
+                    List keyList = List.copyOf(userMap.keySet());
+                    for (int i = 0; i < keyList.size(); i++) {
+                        System.out.println(i + " - " + keyList.get(i));
+                    }
+                    user_selection = Integer.parseInt(user_input.nextLine());
+                    List<String> role_of_chosen_user = null;
+                    try {
+                        String chosen_user = keyList.get(user_selection).toString();
+                        role_of_chosen_user = new ArrayList<>(Arrays.asList(server.getUserRoles(chosen_user)));
+                    } catch (RemoteException | NotBoundException e) {
+                        System.out.println("Error");
+                        e.printStackTrace();
+                    }
+
+                    // REMOVE ROLES
+                    int role_remove_selection;
+                    Scanner role_input_remove = new Scanner(System.in);
+
+                    System.out.println("Please select roles to remove:");
+                    boolean not_finished_remove = true;
+                    List<String> roles_to_remove = new ArrayList<String>();
+                    List<String> ROLES_REMOVE = role_of_chosen_user;
+                    while (not_finished_remove) {
+                        for (int i = 0; i < ROLES_REMOVE.size(); i++) {
+                            System.out.println(i + " - " + ROLES_REMOVE.get(i));
+
+                        }
+                        System.out.println(ROLES_REMOVE.size() + " - I am done");
+                        role_remove_selection = Integer.parseInt(role_input_remove.nextLine());
+                        if (role_remove_selection == ROLES_REMOVE.size()) {
+                            not_finished_remove = false;
+                        } else {
+                            roles_to_remove.add(ROLES_REMOVE.get(role_remove_selection));
+                            ROLES_REMOVE.remove(role_of_chosen_user.get(role_remove_selection));
+
+                        }
+                    }
+                    // Now remove from database the roles in roles_to_remove
+
+                    // ADD ROLES
+                    int role_add_selection;
+                    Scanner role_input_add = new Scanner(System.in);
+                    String[] real_roles = {"manager", "technician", "powerUser", "user"};
+                    List<String> list_real_roles = new ArrayList<String>(Arrays.asList(real_roles));
+                    for (int k = 0; k < role_of_chosen_user.size(); k++) {
+                        list_real_roles.remove(role_of_chosen_user.get(k));
+                    }
+                    System.out.println("Please select a role to add:");
+                    boolean not_finished_add = true;
+                    List<String> roles_to_add = new ArrayList<String>();
+                    List<String> ROLES_ADD = list_real_roles;
+                    while (not_finished_add) {
+                        for (int i = 0; i < ROLES_ADD.size(); i++) {
+                            System.out.println(i + " - " + ROLES_ADD.get(i));
+
+                        }
+                        System.out.println(ROLES_ADD.size() + " - I am done");
+                        role_add_selection = Integer.parseInt(role_input_add.nextLine());
+                        if (role_add_selection == ROLES_ADD.size()) {
+                            not_finished_add = false;
+                        } else {
+                            roles_to_add.add(ROLES_ADD.get(role_add_selection));
+                            ROLES_ADD.remove(list_real_roles.get(role_add_selection));
+                        }
+                    }
+                    // Now add from database the roles in roles_to_ad
+
                 } catch (RemoteException | NotBoundException e) {
                     System.out.println("Error");
                     e.printStackTrace();
                 }
-
-                // REMOVE ROLES
-                int role_remove_selection;
-                Scanner role_input_remove = new Scanner(System.in);
-
-                System.out.println("Please select roles to remove:");
-                boolean not_finished_remove = true;
-                List<String> roles_to_remove = new ArrayList<String>();
-                List<String> ROLES_REMOVE = role_of_chosen_user;
-                while (not_finished_remove) {
-                    for (int i = 0; i < ROLES_REMOVE.size(); i++) {
-                        System.out.println(i + " - " + ROLES_REMOVE.get(i));
-
-                    }
-                    System.out.println(ROLES_REMOVE.size() + " - I am done");
-                    role_remove_selection = Integer.parseInt(role_input_remove.nextLine());
-                    if (role_remove_selection == ROLES_REMOVE.size()) {
-                        not_finished_remove = false;
-                    } else {
-                        roles_to_remove.add(ROLES_REMOVE.get(role_remove_selection));
-                        ROLES_REMOVE.remove(role_of_chosen_user.get(role_remove_selection));
-
-                    }
-                }
-                chosen_user username
-                roles_to_remove [technician, user]
-                // Now remove from database the roles in roles_to_remove
-
-                // ADD ROLES
-                int role_add_selection;
-                Scanner role_input_add = new Scanner(System.in);
-                String[] real_roles = { "manager", "technician", "powerUser", "user" };
-                List<String> list_real_roles = new ArrayList<String>(Arrays.asList(real_roles));
-                for (int k = 0; k < role_of_chosen_user.size(); k++) {
-                    list_real_roles.remove(role_of_chosen_user.get(k));
-                }
-                System.out.println("Please select a role to add:");
-                boolean not_finished_add = true;
-                List<String> roles_to_add = new ArrayList<String>();
-                List<String> ROLES_ADD = list_real_roles;
-                while (not_finished_add) {
-                    for (int i = 0; i < ROLES_ADD.size(); i++) {
-                        System.out.println(i + " - " + ROLES_ADD.get(i));
-
-                    }
-                    System.out.println(ROLES_ADD.size() + " - I am done");
-                    role_add_selection = Integer.parseInt(role_input_add.nextLine());
-                    if (role_add_selection == ROLES_ADD.size()) {
-                        not_finished_add = false;
-                    } else {
-                        roles_to_add.add(ROLES_ADD.get(role_add_selection));
-                        ROLES_ADD.remove(list_real_roles.get(role_add_selection));
-                    }
-                }
-                chosen_user username
-                roles_to_add [powerUser]
-                // Now add from database the roles in roles_to_ad
-
-            } catch (RemoteException | NotBoundException e) {
-                System.out.println("Error");
-                e.printStackTrace();
-            }
-        default:
-            break;
+            default:
+                break;
 
         }
     }

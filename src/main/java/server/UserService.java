@@ -46,25 +46,32 @@ public class UserService {
 
     private void createUser(String username, String password, String[] newRoles) {
         database = new DatabaseConnector();
+        // Create the user
         String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
-        database.query(query);
-        ResultSet res = database.query("SELECT * FROM users WHERE user_name=" + username);
+        database.insert(query);
+        // Manage the roles
+        ResultSet res = database.query("SELECT * FROM users WHERE user_name='" + username + "'");
+
         String user_id = null;
         try {
-            System.out.println(res.getString(1));
+            res.next();
             user_id = res.getString(1);
         } catch (Exception e) {
             System.out.println(e);
         }
         String role_id = null;
-        ResultSet res = database.query("SELECT * FROM roles WHERE role_name=" + "username");
-        try {
-            System.out.println(res.getString(1));
-            role_id = res.getString(1);
-        } catch (Exception e) {
-            System.out.println(e);
+        ResultSet res_role = null;
+        for (int i = 0; i < newRoles.length; i++) {
+            res_role = database.query("SELECT * FROM roles WHERE role_name='" + newRoles[i] + "'");
+            try {
+                res_role.next();
+                role_id = res_role.getString(1);
+                String role_query = "INSERT INTO user_role (role_id, user_id) VALUES ('" + role_id + "','" + user_id + "')";
+                database.insert(role_query);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
-        String role_query = "INSERT INTO roles (role_id, user_id) VALUES ('"+role_id+"',"+user_id+"')";
         database.close();
         userRoles.put(username, newRoles);
         userMap.put(username, hash(password));
