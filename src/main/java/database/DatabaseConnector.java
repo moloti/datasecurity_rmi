@@ -11,7 +11,7 @@ public class DatabaseConnector {
             Class.forName("org.postgresql.Driver");
 
             // étape 2: créer l'objet de connexion
-            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5438/postgres", "postgres",
+            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5438/postgres", "postgres",
                     "postgres");
             // étape 3: créer l'objet statement
         } catch (Exception e) {

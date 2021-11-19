@@ -347,22 +347,18 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             String user_id = userService.getUserId(user);
             for (String role : roles
                  ) {
-                String query = "DELETE FROM users (user_name,password) WHERE user_id = %s AND role = %s".formatted(user_id, role);
+                String query = "DELETE FROM user_role WHERE user_id = %s AND role_id = (select role_id from roles where role_name = %s)".formatted(user_id, role, role);
+                database.query(query);
             }
-            String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
-            database.query(query);
             database.close();
-            userRoles.put(username, newRoles);
-            userMap.put(username, hash(password));
-            writeFile();
+            return true;
         } else
             throw new AuthenticationException();
-
     }
 
     public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-
+           return true;
         } else
             throw new AuthenticationException();
     }
