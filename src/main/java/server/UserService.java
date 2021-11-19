@@ -85,6 +85,7 @@ public class UserService {
                 // always close the writer
                 bf.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

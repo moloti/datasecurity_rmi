@@ -23,7 +23,7 @@ public class MyClient {
 
     public static void main(String[] args) throws Exception {
         boolean cancel = false;
-        boolean authenticated = false;
+        boolean authenticated;
 
         try {
             // Make reference to SSL-based registry

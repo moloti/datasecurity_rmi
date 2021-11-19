@@ -75,7 +75,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             // create BufferedReader object from the File
             br = new BufferedReader(new FileReader(file));
 
-            String line = null;
+            String line;
 
             // read file line by line
             while ((line = br.readLine()) != null) {
