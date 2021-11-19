@@ -1,4 +1,6 @@
 CREATE SCHEMA IF NOT EXISTS rightsmanagement;
+CREATE EXTENSION pgcrypto;
+
 CREATE TABLE IF NOT EXISTS users
 (
     user_id uuid DEFAULT gen_random_uuid (),

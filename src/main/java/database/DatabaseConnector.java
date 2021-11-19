@@ -1,9 +1,7 @@
 package database;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseConnector {
     private final String url = "jdbc:postgresql://localhost:5432/postgres";
@@ -25,6 +23,22 @@ public class DatabaseConnector {
         }
 
         return conn;
+    }
+
+    public void getUsers(){
+        String SQL = "SELECT * FROM users";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
 
