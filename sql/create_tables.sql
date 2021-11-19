@@ -3,7 +3,7 @@ CREATE EXTENSION pgcrypto;
 
 CREATE TABLE IF NOT EXISTS users
 (
-    user_id uuid DEFAULT gen_random_uuid (),
+    user_id VARCHAR(255) DEFAULT gen_random_uuid (),
     user_name VARCHAR(255) NOT NULL,
     password
     VARCHAR(255) NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS transactions
 (
-    transaction_id uuid DEFAULT gen_random_uuid (),
+    transaction_id VARCHAR(255) DEFAULT gen_random_uuid (),
     transaction_name VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS transactions
 
 CREATE TABLE IF NOT EXISTS roles
 (
-    role_id uuid DEFAULT gen_random_uuid (),
+    role_id VARCHAR(255) DEFAULT gen_random_uuid (),
     role_name VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
@@ -35,36 +35,36 @@ CREATE TABLE IF NOT EXISTS roles
 
 CREATE TABLE IF NOT EXISTS user_role
 (
-    user_role_id uuid DEFAULT gen_random_uuid (),
+    user_role_id VARCHAR(255) DEFAULT gen_random_uuid (),
     role_id VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     user_role_id
-)
+),
     CONSTRAINT fk_role
     FOREIGN KEY(role_id)
     REFERENCES roles(role_id),
     CONSTRAINT fk_user
     FOREIGN KEY(user_id)
-    REFERENCES users(user_id),
+    REFERENCES users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS role_transaction
 (
-    role_action_id uuid DEFAULT gen_random_uuid (),
+    role_transaction_id VARCHAR(255) DEFAULT gen_random_uuid (),
     role_id VARCHAR(255) NOT NULL,
     transaction_id VARCHAR(255) NOT NULL,
     PRIMARY KEY
 (
     role_transaction_id
-)
+),
     CONSTRAINT fk_role
     FOREIGN KEY(role_id)
     REFERENCES roles(role_id),
     CONSTRAINT fk_transaction
     FOREIGN KEY(transaction_id)
-    REFERENCES transactions(transaction_id),
+    REFERENCES transactions(transaction_id)
 );
 
 
@@ -83,5 +83,5 @@ CREATE TABLE IF NOT EXISTS acl (
     PRIMARY KEY (acl_id),
     CONSTRAINT fk_user
     FOREIGN KEY(user_id)
-    REFERENCES users(user_id),
+    REFERENCES users(user_id)
 );
