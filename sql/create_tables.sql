@@ -1,113 +1,57 @@
-CREATE TABLE IF NOT EXISTS users
-(
-    user_id
-    varchar
-(
-    250
-) NOT NULL,
-    password
-    varchar
-(
-    250
-) NOT NULL,
-    PRIMARY KEY
-(
-    user_id
-)
-    );
-
-CREATE TABLE IF NOT EXISTS transactions
-(
+CREATE TABLE IF NOT EXISTS users (user_id VARCHAR (250) NOT NULL, password VARCHAR (250) NOT NULL, primary key (user_id));
+CREATE TABLE IF NOT EXISTS transactions (
     transaction_id INT NOT NULL,
-    transaction_name varchar
-(
-    250
-) NOT NULL,
-    PRIMARY KEY
-(
-    transaction_id
-)
+    transaction_name VARCHAR (
+        250
+    ) NOT NULL,
+    primary key (
+        transaction_id
+    )
 );
-
-CREATE TABLE IF NOT EXISTS user_role
-(
+CREATE TABLE IF NOT EXISTS user_role (
     user_role_id INT NOT NULL,
     role_id INT NOT NULL,
-    user_id varchar
-(
-    250
-) NOT NULL,
-    PRIMARY KEY
-(
-    user_role_id
-)
-    CONSTRAINT fk_role
-    FOREIGN KEY(role_id)
-    REFERENCES roles(role_id),
-    CONSTRAINT fk_user
-    FOREIGN KEY(user_id)
-    REFERENCES users(user_id),
+    user_id VARCHAR (
+        250
+    ) NOT NULL,
+    primary key (
+        user_role_id
+    ) constraint fk_role foreign key(role_id) references roles(role_id),
+    constraint fk_user foreign key(user_id) references users(user_id),
 );
-
-CREATE TABLE IF NOT EXISTS role_transaction
-(
+CREATE TABLE IF NOT EXISTS role_transaction (
     role_action_id INT NOT NULL,
     role_id INT NOT NULL,
     transaction_id INT NOT NULL,
-    PRIMARY KEY
-(
-    role_transaction_id
-)
-    CONSTRAINT fk_role
-    FOREIGN KEY(role_id)
-    REFERENCES roles(role_id),
-    CONSTRAINT fk_transaction
-    FOREIGN KEY(transaction_id)
-    REFERENCES transactions(transaction_id),
+    primary key (
+        role_transaction_id
+    ) constraint fk_role foreign key(role_id) references roles(role_id),
+    constraint fk_transaction foreign key(transaction_id) references transactions(transaction_id),
 );
-
-CREATE TABLE IF NOT EXISTS role_transaction
-(
+CREATE TABLE IF NOT EXISTS role_transaction (
     role_action_id INT NOT NULL,
     role_id INT NOT NULL,
     transaction_id INT NOT NULL,
-    PRIMARY KEY
-(
-    role_transaction_id
-)
-    CONSTRAINT fk_role
-    FOREIGN KEY(role_id)
-    REFERENCES roles(role_id),
-    CONSTRAINT fk_transaction
-    FOREIGN KEY(transaction_id)
-    REFERENCES transactions(transaction_id),
+    primary key (
+        role_transaction_id
+    ) constraint fk_role foreign key(role_id) references roles(role_id),
+    constraint fk_transaction foreign key(transaction_id) references transactions(transaction_id),
 );
-
-
-
-
 CREATE TABLE IF NOT EXISTS acl (
     acl_id INT NOT NULL,
-    user_id
-    varchar
-(
-    250
-) NOT NULL,
+    user_id VARCHAR (
+        250
+    ) NOT NULL,
     print BOOLEAN NOT NULL,
     queue BOOLEAN NOT NULL,
     topQueue BOOLEAN NOT NULL,
-    start BOOLEAN NOT NULL,
+    START BOOLEAN NOT NULL,
     stop BOOLEAN NOT NULL,
     restart BOOLEAN NOT NULL,
     status BOOLEAN NOT NULL,
     readConfig BOOLEAN NOT NULL,
     setConfig BOOLEAN NOT NULL,
-    PRIMARY KEY (acl_id),
-    CONSTRAINT fk_user
-    FOREIGN KEY(user_id)
-    REFERENCES users(user_id),
+    primary key (acl_id),
+    constraint fk_user foreign key(user_id) references users(user_id),
 );
-
-CREATE TABLE IF NOT EXISTS rbac (
-
-);
+CREATE TABLE IF NOT EXISTS rbac ();
