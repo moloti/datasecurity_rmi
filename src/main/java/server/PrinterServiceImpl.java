@@ -39,6 +39,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
     private static DatabaseConnector database;
 
+
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
         userService = new UserService();

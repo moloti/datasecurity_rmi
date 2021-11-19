@@ -36,21 +36,44 @@ public class UserService {
         fillRolesTransaction("user", new String[]{"print", "queue"});
         fillRolesTransaction("technician", new String[]{"start", "stop", "restart", "status", "readConfig", "setConfig"});
 
-        fillACL();
-        //print:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
-        //queue:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
-        //topQueue:Alice-Cecilia-George-Ida
-        //start:Alice-George
-        //stop:Alice-George
-        //restart:Alice-Cecilia-Ida
-        //status:Alice-George
-        //readConfig:Alice-George
-        //setConfig:Alice-George
-
+        fillTransactionUsers("print", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George", "Henry", "Ida"});
+        fillTransactionUsers("queue", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George", "Henry", "Ida"});
+        fillTransactionUsers("topQueue", new String[]{"Alice", "Cecilia", "George", "Ida"});
+        fillTransactionUsers("start", new String[]{"Alice", "George"});
+        fillTransactionUsers("stop", new String[]{"Alice", "George"});
+        fillTransactionUsers("restart", new String[]{"Alice", "Cecilia", "Ida"});
+        fillTransactionUsers("status", new String[]{"Alice", "George"});
+        fillTransactionUsers("readConfig", new String[]{"Alice", "George"});
+        fillTransactionUsers("setConfig", new String[]{"Alice", "George"});
+        fillTransactionUsers("manageEmployees", new String[]{"Alice"});
     }
 
-    private void fillACL() {
+    private void fillTransactionUsers(String transaction, String[] initial_users) {
+        database = new DatabaseConnector();
+        String query = "SELECT * FROM transactions where transaction_name='" + transaction + "'";
+        ResultSet res = database.query(query);
+        String transaction_id = null;
+        try {
+            res.next();
+            transaction_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String user_id = null;
+        try {
+            for (int i = 0; i < initial_users.length; i++) {
+                String query_t = "SELECT * FROM users where user_name='" + initial_users[i] + "'";
+                ResultSet res_t = database.query(query_t);
+                res_t.next();
+                user_id = res_t.getString(1);
 
+                String insert_query = "INSERT INTO transaction_user (transaction_id,user_id) VALUES('" + transaction_id + "','" + user_id + "')";
+                database.insert(insert_query);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
     }
 
     private void fillRolesTransaction(String role, String[] initial_transactions) {
