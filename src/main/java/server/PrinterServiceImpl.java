@@ -1,5 +1,7 @@
 package server;
 
+import database.DatabaseConnector;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,6 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.SecureRandom;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +37,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
+    private static DatabaseConnector database;
 
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
@@ -141,11 +145,27 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
-        ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getUserRoles()));
         if (ACL) {
             return AccessVerificationACL(logged_in_user, operation);
         } else {
             // return true if access allowed, otherwise it returns false
+            database = new DatabaseConnector();
+            String query = "SELECT roles.role_name, roles.role_id\n" +
+                    "FROM roles\n" +
+                    "INNER JOIN user_role ON roles.role_id = user_role.role_id\n" +
+                    "INNER JOIN users ON user_role.user_id = users.user_id\n" +
+                    "WHERE users.user_name = '" + logged_in_user + "'";
+            ArrayList<String> user_roles = new ArrayList<String>();
+            try {
+                ResultSet res = database.query(query);
+                while (res.next()) {
+                    user_roles = new ArrayList<String>(Arrays.asList(res.getString(1)));
+                }
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            database.close();
             return AccessVerificationRBAC(user_roles, operation);
         }
     }
