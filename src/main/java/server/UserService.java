@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class UserService {
-    private static final String outputFilePath = System.getProperty("user.dir")
-            + "/src/main/resources/pass.txt";
+    private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/pass.txt";
     private HashMap<String, String> userMap = new HashMap<>();
     private HashMap<String, String> sessionMap = new HashMap<>();
     private String[] roles = null;
@@ -54,8 +53,15 @@ public class UserService {
 
             }
         } else {
-            System.out.println(outputFilePath);
-            createUser("Thomas", "1234", new String[] { "manager" });
+            createUser("Alice", "spain", new String[] { "manager" });
+            // createUser("Bob", "italy", new String[] { "technician" });
+            createUser("Cecilia", "france", new String[] { "poweruser" });
+            createUser("David", "germany", new String[] { "user" });
+            createUser("Erica", "denmark", new String[] { "user" });
+            createUser("Fred", "hungary", new String[] { "user" });
+            createUser("George", "finland", new String[] { "user", "technician" });
+            createUser("Henyr", "sweden", new String[] { "user" });
+            createUser("Ida", "norway", new String[] { "poweruser" });
             System.out.println("User Creation Finished");
         }
     }
@@ -126,6 +132,7 @@ public class UserService {
                 // always close the writer
                 bf.close();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -138,7 +145,7 @@ public class UserService {
             // create BufferedReader object from the File
             br = new BufferedReader(new FileReader(file));
 
-            String line = null;
+            String line;
 
             // read file line by line
             while ((line = br.readLine()) != null) {
@@ -164,8 +171,8 @@ public class UserService {
                 try {
                     br.close();
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                ;
             }
         }
     }
