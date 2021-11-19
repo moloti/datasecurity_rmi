@@ -7,6 +7,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.SecureRandom;
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import javax.naming.AuthenticationException;
+
 import database.DatabaseConnector;
 
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
@@ -34,6 +36,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private static int session_deadline = 60;
     public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
+    private DatabaseConnector database = new DatabaseConnector();
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
 
     public PrinterServiceImpl() throws RemoteException {
@@ -41,7 +44,8 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userService = new UserService();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
-        DatabaseConnector();
+        System.out.println(database.query("SELECT * FROM roles"));
+        database.close();
         System.out.println(
                 "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
         Scanner input = new Scanner(System.in);

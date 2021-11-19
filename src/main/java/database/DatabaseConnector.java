@@ -3,20 +3,38 @@ package database;
 import java.sql.*;
 
 public class DatabaseConnector {
-    private Connection conn;
+    public Connection conn;
 
-    public static ResultSet main(String query) {
+    public DatabaseConnector() {
+        try {
+            // étape 1: charger la classe de driver
+            Class.forName("org.postgresql.Driver");
+
+            // étape 2: créer l'objet de connexion
+            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5438/postgres", "postgres",
+                    "postgres");
+            // étape 3: créer l'objet statement
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public ResultSet query(String query) {
         ResultSet res = null;
         try {
-            Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5438/postgres", "postgres",
-                    "postgres");
             Statement stmt = conn.createStatement();
             res = stmt.executeQuery(query);
-            conn.close();
         } catch (Exception e) {
             System.out.println(e);
         }
         return res;
+    }
+
+    public void close() {
+        try {
+            conn.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
