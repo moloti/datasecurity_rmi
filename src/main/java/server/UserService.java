@@ -3,7 +3,6 @@ package server;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,21 +16,22 @@ public class UserService {
 
     public UserService() {
         System.out.println("Creating users...");
-        createUser("Alice", "spain", new String[] { "manager" });
-        createUser("Bob", "italy", new String[] { "technician" });
-        createUser("Cecilia", "france", new String[] { "powerUser" });
-        createUser("David", "germany", new String[] { "user" });
-        createUser("Erica", "denmark", new String[] { "user" });
-        createUser("Fred", "hungary", new String[] { "user" });
-        createUser("George", "finland", new String[] { "user", "technician" });
-        createUser("Henry", "sweden", new String[] { "user" });
-        createUser("Ida", "norway", new String[] { "powerUser" });
+        createUser("Alice", "spain", new String[]{"manager"});
+        createUser("Bob", "italy", new String[]{"technician"});
+        createUser("Cecilia", "france", new String[]{"powerUser"});
+        createUser("David", "germany", new String[]{"user"});
+        createUser("Erica", "denmark", new String[]{"user"});
+        createUser("Fred", "hungary", new String[]{"user"});
+        createUser("George", "finland", new String[]{"user", "technician"});
+        createUser("Henry", "sweden", new String[]{"user"});
+        createUser("Ida", "norway", new String[]{"powerUser"});
         System.out.println("User Creation Finished");
     }
 
     public HashMap<String, String> getUserMap() {
         return userMap;
     }
+
     public HashMap<String, String> getSessionMap() {
         return sessionMap;
     }
@@ -46,8 +46,12 @@ public class UserService {
         writeFile();
     }
 
-    public String[] getRoles() {
+    public String[] getUserRoles() {
         return userRoles.get(sessionMap.keySet().toArray()[0]);
+    }
+
+    public String[] getSpecifiedUserRoles(String username) {
+        return userRoles.get(username);
     }
 
     private String hash(String password) {

@@ -1,5 +1,6 @@
 package server;
 
+import java.rmi.NotBoundException;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.FileReader;
 import java.security.SecureRandom;
@@ -22,7 +23,7 @@ import java.rmi.RemoteException;
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
     private HashMap<String, String> userMap = new HashMap<>();
-    private UserService userService;
+    public UserService userService;
     private String status = "";
     private static PrinterServiceImpl service;
     private Map<String, LinkedList> printerMap = new HashMap<>();
@@ -57,6 +58,14 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         } else {
             System.out.println("Access policy not known, try again.");
         }
+    }
+
+    public HashMap<String, String> getUserMap() throws RemoteException, NotBoundException {
+        return userService.getUserMap();
+    }
+
+    public String[] getUserRoles(String username) throws RemoteException, NotBoundException {
+        return userService.getSpecifiedUserRoles(username);
     }
 
     private void readAccessFile(File file) {
@@ -126,7 +135,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public boolean VerifyRole(String operation, String logged_in_user) throws RemoteException, AuthenticationException {
-        ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getRoles()));
+        ArrayList<String> user_roles = new ArrayList<String>(Arrays.asList(userService.getUserRoles()));
         if (ACL) {
             return AccessVerificiationACL(logged_in_user, operation);
         } else {
