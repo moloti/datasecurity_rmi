@@ -43,12 +43,12 @@ public class UserService {
         fillTransactionUsers("print", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George"});
         fillTransactionUsers("queue", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George"});
         fillTransactionUsers("topQueue", new String[]{"Alice", "Cecilia"});
-        fillTransactionUsers("start", new String[]{"Alice"});
-        fillTransactionUsers("stop", new String[]{"Alice"});
-        fillTransactionUsers("restart", new String[]{"Alice", "Cecilia"});
-        fillTransactionUsers("status", new String[]{"Alice"});
-        fillTransactionUsers("readConfig", new String[]{"Alice"});
-        fillTransactionUsers("setConfig", new String[]{"Alice"});
+        fillTransactionUsers("start", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("stop", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("restart", new String[]{"Alice", "Cecilia", "Bob"});
+        fillTransactionUsers("status", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("readConfig", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("setConfig", new String[]{"Alice", "Bob"});
         fillTransactionUsers("manageEmployees", new String[]{"Alice"});
     }
 
