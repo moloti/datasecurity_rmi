@@ -31,7 +31,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     private HashMap<String, String> userMap = new HashMap<>();
     private static UserService userService;
-    private static DatabaseConnector databaseConnector;
     private String status = "";
     private Map<String, LinkedList> printerMap = new HashMap<>();
     private Map<String, String> parameterMap = new HashMap<>();
@@ -44,7 +43,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     public PrinterServiceImpl() throws RemoteException {
         // user initialization
         userService = new UserService();
-        databaseConnector = new DatabaseConnector();
+        DatabaseConnector databaseConnector = new DatabaseConnector();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
         System.out.println(
@@ -369,15 +368,21 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     public boolean removeUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-            DatabaseConnector database = new DatabaseConnector();
-            String user_id = userService.getUserId(user);
-            for (String role : roles
-                 ) {
-                String query = "DELETE FROM user_role WHERE user_id = %s AND role_id = (select role_id from roles where role_name = %s)".formatted(user_id, role, role);
-                database.query(query);
+            try {
+                DatabaseConnector database = new DatabaseConnector();
+                String user_id = userService.getUserId(user);
+                for (String role : roles
+                ) {
+                    String query = "DELETE FROM user_role WHERE user_id = %s AND role_id = (select role_id from roles where role_name = %s)".formatted(user_id, role, role);
+                    System.out.println(query);
+                    database.query(query);
+                }
+                database.close();
+                return true;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
             }
-            database.close();
-            return true;
         } else
             throw new AuthenticationException();
     }

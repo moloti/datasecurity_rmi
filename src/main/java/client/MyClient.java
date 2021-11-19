@@ -447,6 +447,7 @@ public class MyClient {
 
                     // Now remove from database the roles in roles_to_remove
                     try {
+                        System.out.println("Before Remove User Roles");
                         server.removeUserRoles(session, chosen_user, roles_to_remove);
                     }catch (AuthenticationException e) {
                         System.out.println("Error");
