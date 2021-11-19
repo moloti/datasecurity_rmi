@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS roles (
     role_id INT NOT NULL primary key,
     role_name VARCHAR (
         250
-    ) NOT NULL,
+    ) NOT NULL
 );
 CREATE TABLE IF NOT EXISTS user_role (
     user_role_id INT NOT NULL primary key,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS user_role (
         250
     ) NOT NULL,
     constraint fk_role foreign key(role_id) references roles(role_id),
-    constraint fk_user foreign key(user_id) references users(user_id),
+    constraint fk_user foreign key(user_id) references users(user_id)
 );
 CREATE TABLE IF NOT EXISTS role_transaction (
     role_action_id INT NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS role_transaction (
     primary key (
         role_transaction_id
     ) constraint fk_role foreign key(role_id) references roles(role_id),
-    constraint fk_transaction foreign key(transaction_id) references transactions(transaction_id),
+    constraint fk_transaction foreign key(transaction_id) references transactions(transaction_id)
 );
 CREATE TABLE IF NOT EXISTS acl (
     acl_id INT NOT NULL,
@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS acl (
     status BOOLEAN NOT NULL,
     readConfig BOOLEAN NOT NULL,
     setConfig BOOLEAN NOT NULL,
+    manageEmployee BOOLEAN NOT NULL,
     primary key (acl_id),
-    constraint fk_user foreign key(user_id) references users(user_id),
+    constraint fk_user foreign key(user_id) references users(user_id)
 );
