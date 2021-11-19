@@ -331,7 +331,7 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             String user_id = userService.getUserId(user);
             for (String role : roles
                  ) {
-                String query = "DELETE FROM users (user_name,password) WHERE user_id = %s".formatted(user_id, role);
+                String query = "DELETE FROM users (user_name,password) WHERE user_id = %s AND role = %s".formatted(user_id, role);
             }
             String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
             database.query(query);

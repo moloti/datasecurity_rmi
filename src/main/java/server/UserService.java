@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.HashMap;
 
 import database.DatabaseConnector;
@@ -18,7 +19,6 @@ public class UserService {
     private static DatabaseConnector database;
 
     public UserService() {
-        database = new DatabaseConnector();
         System.out.println("Creating users...");
         createUser("Alice", "spain", new String[]{"manager"});
         createUser("Bob", "italy", new String[]{"technician"});
@@ -36,7 +36,6 @@ public class UserService {
         return userMap;
     }
 
-
     public HashMap<String, String> getSessionMap() {
         return sessionMap;
     }
@@ -46,18 +45,37 @@ public class UserService {
     }
 
     private void createUser(String username, String password, String[] newRoles) {
+        database = new DatabaseConnector();
+        // Create the user
         String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
-        database.query(query);
+        database.insert(query);
+        // Manage the roles
+        ResultSet res = database.query("SELECT * FROM users WHERE user_name='" + username + "'");
+
+        String user_id = null;
+        try {
+            res.next();
+            user_id = res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        String role_id = null;
+        ResultSet res_role = null;
+        for (int i = 0; i < newRoles.length; i++) {
+            res_role = database.query("SELECT * FROM roles WHERE role_name='" + newRoles[i] + "'");
+            try {
+                res_role.next();
+                role_id = res_role.getString(1);
+                String role_query = "INSERT INTO user_role (role_id, user_id) VALUES ('" + role_id + "','" + user_id + "')";
+                database.insert(role_query);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
         database.close();
         userRoles.put(username, newRoles);
         userMap.put(username, hash(password));
         writeFile();
-    }
-
-    public String getUserId(){
-        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
-        database.query(query);
-        database.close();
     }
 
     public String[] getUserRoles() {
