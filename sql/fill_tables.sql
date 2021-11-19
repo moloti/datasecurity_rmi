@@ -12,7 +12,8 @@ VALUES
     (gen_random_uuid (), 'restart'),
     (gen_random_uuid (), 'status'),
     (gen_random_uuid (), 'readConfig'),
-    (gen_random_uuid (), 'setConfig');
+    (gen_random_uuid (), 'setConfig'),
+    (gen_random_uuid (), 'manageEmployees');
 INSERT INTO
     roles(
         role_id,

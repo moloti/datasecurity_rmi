@@ -6,7 +6,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 
 public class ApplicationServer extends UnicastRemoteObject {
-
     public ApplicationServer() throws Exception {
         super(Registry.REGISTRY_PORT/* , new RMISSLClientSocketFactory(), new RMISSLServerSocketFactory() */);
     }
