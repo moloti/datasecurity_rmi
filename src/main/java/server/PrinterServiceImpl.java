@@ -80,11 +80,11 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     }
 
     public void removeRoles(String username, List<String> roles_to_remove) throws RemoteException, NotBoundException {
+        database = new DatabaseConnector();
         String user_id = userService.getUserId(username);
-        for (String role : roles_to_remove
-        ) {
-            String query = "DELETE FROM user_role WHERE user_id ='" + user_id + "' AND role_id = (select role_id from roles where role_name ='" + role + "')";
-            database.query(query);
+        for (int i = 0; i < roles_to_remove.size(); i++) {
+            String query = "DELETE FROM user_role WHERE user_id ='" + user_id + "' AND role_id = (SELECT role_id FROM roles WHERE role_name='" + roles_to_remove.get(i) + "')";
+            database.delete(query);
         }
         database.close();
     }

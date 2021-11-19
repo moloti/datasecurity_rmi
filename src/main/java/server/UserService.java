@@ -108,12 +108,12 @@ public class UserService {
         database.close();
     }
 
-    public String getUserId(String user) {
+    public String getUserId(String username) {
         database = new DatabaseConnector();
-        String user_id = "";
+        String user_id = null;
         try {
-            String query_t = "SELECT * FROM users where user_name='" + user + "'";
-            ResultSet res_t = database.query(query_t);
+            String query = "SELECT * FROM users WHERE user_name='" + username + "'";
+            ResultSet res_t = database.query(query);
             res_t.next();
             user_id = res_t.getString(1);
         } catch (Exception e) {
