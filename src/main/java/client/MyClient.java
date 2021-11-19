@@ -202,9 +202,19 @@ public class MyClient {
                     e.printStackTrace();
                 }
                 break;
-            // cancel the selection
+            // Manage employees
             case 8:
-                ManageEmployees(input);
+                try {
+                    boolean access = server.VerifyRole("manageEmployees", logged_in_username);
+                    if (access) {
+                        ManageEmployees(input);
+                    } else {
+                        System.out.println("You are not authorized to perform this action");
+                        chooseAction();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case 9:
             default:
