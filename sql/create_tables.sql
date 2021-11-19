@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS role_transaction
 
 
 CREATE TABLE IF NOT EXISTS acl (
-    acl_id uuid DEFAULT gen_random_uuid (),
+    acl_id VARCHAR(255) DEFAULT gen_random_uuid (),
     user_id VARCHAR(255) NOT NULL,
     print BOOLEAN NOT NULL,
     queue BOOLEAN NOT NULL,
