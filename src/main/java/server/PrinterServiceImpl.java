@@ -80,6 +80,32 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         return userService.getSpecifiedUserRoles(username);
     }
 
+    public void addRoles(String username, List<String> roles_to_add)  throws RemoteException, NotBoundException {
+        database = new DatabaseConnector();
+        String user_query = "SELECT * FROM users WHERE user_name='" + username + "'";
+        ResultSet user_res = database.query(user_query);
+        String user_id = null;
+        try {
+            user_res.next();
+            user_id = user_res.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        for (int i = 0; i < roles_to_add.size(); i++) {
+            String role_query = "SELECT * FROM roles WHERE role_name='" + roles_to_add.get(i) + "'";
+            ResultSet role_res = database.query(role_query);
+            try {
+                role_res.next();
+                String role_id = role_res.getString(1);
+                String insert_query = "INSERT INTO user_role (role_id,user_id) VALUES('" + role_id + "','" + user_id + "')";
+                database.insert(insert_query);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+        database.close();
+    }
+
     private void readAccessFile(File file) {
         BufferedReader br = null;
         try {
@@ -358,7 +384,29 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     public boolean addUserRoles(String token, String user, List<String> roles) throws RemoteException, AuthenticationException {
         if (checkToken(token)) {
-           return true;
+            String user_query = "SELECT * FROM users WHERE user_name='" + user + "'";
+            ResultSet user_res = database.query(user_query);
+            String user_id = null;
+            try {
+                user_res.next();
+                user_id = user_res.getString(1);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            for (int i = 0; i < roles.size(); i++) {
+                String role_query = "SELECT * FROM roles WHERE role_name='" + roles.get(i) + "'";
+                ResultSet role_res = database.query(role_query);
+                try {
+                    role_res.next();
+                    String role_id = role_res.getString(1);
+                    String insert_query = "INSERT INTO user_role (role_id,user_id) VALUES('" + role_id + "','" + user_id + "')";
+                    database.insert(insert_query);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+            database.close();
+            return true;
         } else
             throw new AuthenticationException();
     }

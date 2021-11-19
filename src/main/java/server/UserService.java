@@ -32,9 +32,7 @@ public class UserService {
         createUser("David", "germany", new String[]{"user"});
         createUser("Erica", "denmark", new String[]{"user"});
         createUser("Fred", "hungary", new String[]{"user"});
-        createUser("George", "finland", new String[]{"user", "technician"});
-        createUser("Henry", "sweden", new String[]{"user"});
-        createUser("Ida", "norway", new String[]{"powerUser"});
+        createUser("George", "finland", new String[]{"user"});
         System.out.println("User Creation Finished");
 
         fillRolesTransaction("manager", new String[]{"print", "queue", "topQueue", "start", "stop", "restart", "status", "readConfig", "setConfig", "manageEmployees"});
@@ -42,15 +40,15 @@ public class UserService {
         fillRolesTransaction("user", new String[]{"print", "queue"});
         fillRolesTransaction("technician", new String[]{"start", "stop", "restart", "status", "readConfig", "setConfig"});
 
-        fillTransactionUsers("print", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George", "Henry", "Ida"});
-        fillTransactionUsers("queue", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George", "Henry", "Ida"});
-        fillTransactionUsers("topQueue", new String[]{"Alice", "Cecilia", "George", "Ida"});
-        fillTransactionUsers("start", new String[]{"Alice", "George"});
-        fillTransactionUsers("stop", new String[]{"Alice", "George"});
-        fillTransactionUsers("restart", new String[]{"Alice", "Cecilia", "Ida"});
-        fillTransactionUsers("status", new String[]{"Alice", "George"});
-        fillTransactionUsers("readConfig", new String[]{"Alice", "George"});
-        fillTransactionUsers("setConfig", new String[]{"Alice", "George"});
+        fillTransactionUsers("print", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George"});
+        fillTransactionUsers("queue", new String[]{"Alice", "Cecilia", "David", "Erica", "Fred", "George"});
+        fillTransactionUsers("topQueue", new String[]{"Alice", "Cecilia"});
+        fillTransactionUsers("start", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("stop", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("restart", new String[]{"Alice", "Cecilia", "Bob"});
+        fillTransactionUsers("status", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("readConfig", new String[]{"Alice", "Bob"});
+        fillTransactionUsers("setConfig", new String[]{"Alice", "Bob"});
         fillTransactionUsers("manageEmployees", new String[]{"Alice"});
     }
 
