@@ -19,6 +19,15 @@ public class DatabaseConnector {
         }
     }
 
+    public void insert(String query) {
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(query);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     public ResultSet query(String query) {
         ResultSet res = null;
         try {

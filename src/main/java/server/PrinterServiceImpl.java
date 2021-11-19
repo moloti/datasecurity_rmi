@@ -23,7 +23,6 @@ import java.util.Scanner;
 
 import javax.naming.AuthenticationException;
 
-import database.DatabaseConnector;
 
 public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterService {
 
@@ -36,7 +35,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
     private static int session_deadline = 60;
     public static HashMap<String, List<String>> server_roles = new HashMap<String, List<String>>();
     private boolean ACL;
-    private DatabaseConnector database = new DatabaseConnector();
     private static final String outputFilePath = System.getProperty("user.dir") + "/src/main/resources/";
 
     public PrinterServiceImpl() throws RemoteException {

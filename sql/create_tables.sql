@@ -1,3 +1,4 @@
+
 CREATE SCHEMA IF NOT EXISTS rightsmanagement;
 CREATE
 EXTENSION pgcrypto;
