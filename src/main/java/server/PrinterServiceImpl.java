@@ -44,8 +44,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
         userService = new UserService();
         userMap = userService.getUserMap();
         // Ask the user what role method they want to go for
-        System.out.println(database.query("SELECT * FROM roles"));
-        database.close();
         System.out.println(
                 "Please enter <ACL> if you want to use Access Control List authorization method or <RBAC> for a Role Based Access Crontrol...");
         Scanner input = new Scanner(System.in);

@@ -1,5 +1,7 @@
 package server;
 
+import database.DatabaseConnector;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,18 +15,19 @@ public class UserService {
     private final HashMap<String, String> userMap = new HashMap<>();
     private final HashMap<String, String[]> userRoles = new HashMap<>();
     private final HashMap<String, String> sessionMap = new HashMap<>();
+    private DatabaseConnector database = new DatabaseConnector();
 
     public UserService() {
         System.out.println("Creating users...");
-        createUser("Alice", "spain", new String[]{"manager"});
-        createUser("Bob", "italy", new String[]{"technician"});
-        createUser("Cecilia", "france", new String[]{"powerUser"});
-        createUser("David", "germany", new String[]{"user"});
-        createUser("Erica", "denmark", new String[]{"user"});
-        createUser("Fred", "hungary", new String[]{"user"});
-        createUser("George", "finland", new String[]{"user", "technician"});
-        createUser("Henry", "sweden", new String[]{"user"});
-        createUser("Ida", "norway", new String[]{"powerUser"});
+        createUser("Alice", "spain", new String[] { "manager" });
+        createUser("Bob", "italy", new String[] { "technician" });
+        createUser("Cecilia", "france", new String[] { "powerUser" });
+        createUser("David", "germany", new String[] { "user" });
+        createUser("Erica", "denmark", new String[] { "user" });
+        createUser("Fred", "hungary", new String[] { "user" });
+        createUser("George", "finland", new String[] { "user", "technician" });
+        createUser("Henry", "sweden", new String[] { "user" });
+        createUser("Ida", "norway", new String[] { "powerUser" });
         System.out.println("User Creation Finished");
     }
 
@@ -41,6 +44,8 @@ public class UserService {
     }
 
     private void createUser(String username, String password, String[] newRoles) {
+        database.query(
+                "INSERT INTO TABLE_NAME (user, column2, )VALUES (value1, value2, value3,...valueN)");
         userRoles.put(username, newRoles);
         userMap.put(username, hash(password));
         writeFile();
