@@ -6,7 +6,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 import database.DatabaseConnector;
 
@@ -123,8 +126,38 @@ public class UserService {
         return user_id;
     }
 
+    public Map<String, String> getUser(String username) {
+        DatabaseConnector database = new DatabaseConnector();
+        Map<String, String> usermap = new HashMap<>();
+        try {
+            String query = "SELECT * FROM users WHERE user_name='" + username + "'";
+            ResultSet res_t = database.query(query);
+            res_t.next();
+            usermap.put("user_id", res_t.getString(1));
+            usermap.put("user_name", res_t.getString(2));
+            usermap.put("password", res_t.getString(3));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
+        return usermap;
+    }
+
     public HashMap<String, String> getUserMap() {
+        DatabaseConnector database = new DatabaseConnector();
+        HashMap<String, String> userMap = new HashMap<>();
+        try {
+            String query = "SELECT * FROM users";
+            ResultSet res_t = database.query(query);
+            while (res_t.next()) {
+                userMap.put(res_t.getString(2), res_t.getString(3));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
         return userMap;
+
     }
 
     public HashMap<String, String> getSessionMap() {
@@ -138,7 +171,7 @@ public class UserService {
     private void createUser(String username, String password, String[] newRoles) {
         database = new DatabaseConnector();
         // Create the user
-        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + password + "')";
+        String query = "INSERT INTO users (user_name,password) VALUES ('" + username + "','" + hash(password) + "')";
         database.insert(query);
         // Manage the roles
         ResultSet res = database.query("SELECT * FROM users WHERE user_name='" + username + "'");
@@ -169,12 +202,25 @@ public class UserService {
         writeFile();
     }
 
-    public String[] getUserRoles() {
-        return userRoles.get(sessionMap.keySet().toArray()[0]);
-    }
-
     public String[] getSpecifiedUserRoles(String username) {
-        return userRoles.get(username);
+        database = new DatabaseConnector();
+        List<String> roles = new ArrayList<String>();
+        String query = "SELECT role_name FROM roles WHERE role_id IN (SELECT role_id FROM user_role INNER JOIN users ON users.user_id = user_role.user_id WHERE users.user_name='" + username + "')";
+        try {
+            ResultSet res = database.query(query);
+            while (res.next()) {
+                roles.add(res.getString(1));
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
+        String[] roles_string = new String[roles.size()];
+        for (int i = 0; i < roles.size(); i++) {
+            roles_string[i] = roles.get(i);
+        }
+        return roles_string;
     }
 
     private String hash(String password) {

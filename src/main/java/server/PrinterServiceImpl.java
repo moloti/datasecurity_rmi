@@ -281,8 +281,9 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
 
     @Override
     public String authenticate(String username, String password) throws RemoteException {
-        if ((!userMap.isEmpty()) || userMap.containsKey(username)) {
-            if (userService.verifyHash(password, userMap.get(username))) {
+        Map<String, String> user = userService.getUser(username);
+        if ((!user.isEmpty()) || user.containsKey(username)) {
+            if (userService.verifyHash(password, user.get("password"))) {
                 String sessionKey = generateSessionKey(new Timestamp(System.currentTimeMillis()));
                 userService.addSession(username, sessionKey);
                 return sessionKey;
