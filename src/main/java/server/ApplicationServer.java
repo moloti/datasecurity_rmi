@@ -12,6 +12,7 @@ public class ApplicationServer extends UnicastRemoteObject {
     }
 
     public static void main(String[] args) {
+
         try {
             // Create SSL-based registry
             Registry registry = LocateRegistry.createRegistry(

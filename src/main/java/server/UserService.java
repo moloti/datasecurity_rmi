@@ -31,10 +31,25 @@ public class UserService {
         createUser("Ida", "norway", new String[]{"powerUser"});
         System.out.println("User Creation Finished");
 
-        fillRolesTransaction("manager", new String[]{"print", "queue", "topQueue", "start", "stop", "restart", "status", "readConfig", "setConfig"});
+        fillRolesTransaction("manager", new String[]{"print", "queue", "topQueue", "start", "stop", "restart", "status", "readConfig", "setConfig", "manageEmployees"});
         fillRolesTransaction("powerUser", new String[]{"print", "queue", "topQueue", "restart"});
         fillRolesTransaction("user", new String[]{"print", "queue"});
         fillRolesTransaction("technician", new String[]{"start", "stop", "restart", "status", "readConfig", "setConfig"});
+
+        fillACL();
+        //print:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
+        //queue:Alice-Cecilia-David-Erica-Fred-George-Henry-Ida
+        //topQueue:Alice-Cecilia-George-Ida
+        //start:Alice-George
+        //stop:Alice-George
+        //restart:Alice-Cecilia-Ida
+        //status:Alice-George
+        //readConfig:Alice-George
+        //setConfig:Alice-George
+
+    }
+
+    private void fillACL() {
 
     }
 

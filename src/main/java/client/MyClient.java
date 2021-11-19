@@ -96,8 +96,8 @@ public class MyClient {
         System.out.println("5 - Restart print server");
         System.out.println("6 - Get Printer Configuration");
         System.out.println("7 - Set Printer Configuration");
-        System.out.println("9 - ManageEmployees");
-        System.out.println("8 - Quit");
+        System.out.println("8 - ManageEmployees");
+        System.out.println("9 - Quit");
 
         selection = Integer.parseInt(input.nextLine());
 
@@ -204,9 +204,9 @@ public class MyClient {
                 break;
             // cancel the selection
             case 8:
+                ManageEmployees(input);
                 break;
             case 9:
-                ManageEmployees(input);
             default:
                 break;
         }

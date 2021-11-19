@@ -211,7 +211,6 @@ public class PrinterServiceImpl extends UnicastRemoteObject implements PrinterSe
             }
         } else
             throw new AuthenticationException();
-
     }
 
     @Override
