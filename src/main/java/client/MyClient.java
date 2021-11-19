@@ -442,6 +442,7 @@ public class MyClient {
 
                         }
                     }
+                    server.removeRoles(chosen_user, roles_to_remove);
                     // Now remove from database the roles in roles_to_remove
 
                     // ADD ROLES

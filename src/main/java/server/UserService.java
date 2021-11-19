@@ -108,6 +108,21 @@ public class UserService {
         database.close();
     }
 
+    public String getUserId(String user) {
+        database = new DatabaseConnector();
+        String user_id = "";
+        try {
+            String query_t = "SELECT * FROM users where user_name='" + user + "'";
+            ResultSet res_t = database.query(query_t);
+            res_t.next();
+            user_id = res_t.getString(1);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        database.close();
+        return user_id;
+    }
+
     public HashMap<String, String> getUserMap() {
         return userMap;
     }
